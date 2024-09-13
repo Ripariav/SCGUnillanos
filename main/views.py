@@ -75,7 +75,6 @@ def crear_contrato(request):
     return render(request, 'main/create_contract.html', {'form': form})
 
 
-@login_required
 def create_superuser(request):
     if request.method == 'POST':
         form = SuperUserCreationForm(request.POST)

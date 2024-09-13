@@ -1,0 +1,57 @@
+{% extends "main/dashboard.html" %} {% load static tailwind_tags %} {% load static %} 
+{% block title %} SCG - Contratos {% endblock title %}
+{% block contentdash %}
+
+<section class="text-gray-600 body-font  w-screen">
+    <div class="container px-5 py-14 my-10 mx-auto bg-white shadow-lg rounded-lg">
+      <div class="flex flex-col text-center w-full mb-10">
+        <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de contratos</h1>
+        <p class="lg:w-2/3 mx-auto leading-relaxed text-base">¡Hola, {{user.username}}!</p>
+      </div>
+      <div class=" w-full mx-auto overflow-auto">
+        <table class="table-auto w-full text-left whitespace-no-wrap">
+          <thead class="bg-blue-100">
+            <tr>
+              <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm  rounded-tl ">Código UNSPSC (cada código separado por ;)</th>
+              <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Dependencia Responsable</th>
+              <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Descripción</th>
+              <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Fecha Estimada de incio</th>
+              <th class="w-10 px-4 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tr ">Fecha Estimada de final</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if contratos %}
+            {% for contrato in contratos %}
+            <tr class="bg-slate-100 rounded-b-lg">
+              <td class="px-4 py-3">{{ contrato.codigo_unspsc }}</td>
+              <td class="px-4 py-3">{{ contrato.dependencia_responsable }}</td>
+              <td class="px-4 py-3">{{ contrato.descripcion }}</td>
+              <td class="px-4 py-3 text-lg text-gray-900">{{contrato.fecha_estimada_inicio}}</td>
+              <td class="px-4 py-3 text-lg text-gray-900">{{contrato.fecha_estimada_ofertas}}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <td class="text-red-600">
+              <h2>No hay contratos</h2>
+            </td>
+            <td class="text-red-600">
+              <h2> - </h2>
+            </td>
+            <td class="text-red-600">
+              <h2> - </h2>
+            </td>
+            <td class="text-red-600">
+              <h2> - </h2>
+            </td>
+            {% endif %}
+          </tbody>
+
+        </table>
+      </div>
+      <div class="flex pl-4 mt-4 w-full mx-auto">
+        <button class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded group">Añadir Contrato<i class="fa-solid fa-plus flex mt-1 items-center justify-center ml-1 transition-transform duration-300 group-hover:rotate-90"></i></button>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

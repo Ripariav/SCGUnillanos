@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import Contrato
 
 class SuperUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -18,3 +19,8 @@ class SuperUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class ContratoForm(forms.ModelForm):
+    class Meta:
+        model = Contrato
+        fields = ['codigo_unspsc', 'dependencia_responsable', 'descripcion', 'observaciones', 'fecha_estimada_inicio', 'fecha_estimada_ofertas']

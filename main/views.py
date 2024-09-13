@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import SuperUserCreationForm
+from .forms import SuperUserCreationForm, ContratoForm
 
 # Create your views here.
 def user_login(request):
@@ -58,6 +58,21 @@ def edit_profile(request):
 def create_contractview(request):
     contratos = Contrato.objects.all()
     return render(request, 'main/create_contract.html', {'contratos': contratos})
+
+@login_required
+def crear_contrato(request):
+    if request.method == 'POST':
+        form = ContratoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'El contrato ha sido creado con éxito.')
+            return redirect('crear_contrato')  # Redirige a la misma página o a donde desees
+        else:
+            messages.error(request, 'Hubo un error al crear el contrato. Verifica los campos.')
+    else:
+        form = ContratoForm()
+    
+    return render(request, 'main/create_contract.html', {'form': form})
 
 
 @login_required

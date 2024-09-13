@@ -174,7 +174,7 @@ NPM_BIN_PATH = 'C:/Program Files/nodejs/npm.cmd'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 #trusted origins
-CSRF_TRUSTED_ORIGINS = ['http://', 'https://']
+CSRF_TRUSTED_ORIGINS = ['http://', 'https://scgunillanos.up.railway.app']
 
 #login settings
 LOGIN_URL = 'login'

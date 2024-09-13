@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .forms import SuperUserCreationForm
 
 # Create your views here.
 def user_login(request):
@@ -57,3 +58,17 @@ def edit_profile(request):
 def create_contractview(request):
     contratos = Contrato.objects.all()
     return render(request, 'main/create_contract.html', {'contratos': contratos})
+
+
+@login_required
+def create_superuser(request):
+    if request.method == 'POST':
+        form = SuperUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Superuser created successfully.')
+            return redirect('create_superuser')  # Cambia la redirección si lo necesitas
+    else:
+        form = SuperUserCreationForm()
+    
+    return render(request, 'main/superuser.html', {'form': form})

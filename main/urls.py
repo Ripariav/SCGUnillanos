@@ -8,4 +8,5 @@ urlpatterns = [
     path('contract/', views.contractview, name='contract'),
     path('profile/', views.profileview, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
+    path('superuser/', views.create_superuser, name='create_superuser'),
 ]

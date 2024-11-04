@@ -1,0 +1,124 @@
+{% extends "dashboard.html" %}
+{% load static tailwind_tags form_filters %}
+{% load static %}
+{% block title %} SCG - Proveedores y Supervisores {% endblock title %}
+{% block contentdash %}
+<div class="w-screen mx-auto flex flex-col gap-5 items-center">
+
+  <div class="flex items-center justify-center mt-10" id="gestor-ps">
+    <div class="flex space-x-2 border-[3px] border-indigo-400 rounded-xl select-none">
+        <label class="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer">
+            <input type="radio" name="radio" value="supervisores" class="peer hidden" checked />
+            <span class="tracking-widest  peer-checked:bg-indigo-400 text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out">Supervisores</span>
+        </label>
+
+        <label class="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer">
+            <input type="radio" name="radio" value="proveedores" class="peer hidden" />
+            <span class="tracking-widest peer-checked:bg-indigo-400 text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out">Proveedores</span>
+        </label>
+    </div>
+</div>
+
+
+    <section class="text-gray-600 body-font w-full  overflow-auto" id="section-proveedores">
+        <div class="container px-5 py-14 my-2 mx-auto bg-white shadow-lg rounded-lg overflow-y-auto">
+          <div class="flex flex-col text-center w-full mb-10">
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de Proveedores</h1>
+          </div>
+          <div class="w-full mx-auto overflow-auto">
+            <table class="table-auto w-full text-left whitespace-no-wrap bg-blue-200 rounded-t-md">
+              <thead>
+                  <tr>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tl-lg">Nombre</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Nit o C.C</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Representate Legal</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Nit o C.C del RL</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Telefono</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Email</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Fecha de agregado</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% if contratistas %}
+                      {% for contratista in contratistas %}
+                      <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
+                          <td class="px-4 py-3">{{ contratista.nombre }}</td>
+                          <td class="px-4 py-3">{{ contratista.nit_o_cc }}</td>
+                          <td class="px-4 py-3">{{ contratista.representante_legal }}</td>
+                          <td class="px-4 py-3">{{ contratista.nit_o_cc_representante_legal }}</td>
+                          <td class="px-4 py-3">{{ contratista.telefono }}</td>
+                          <td class="px-4 py-3">{{ contratista.email }}</td>
+                          <td class="px-4 py-3">{{ contratista.fecha_agregado|date:"d/m/Y" }}</td>
+                      </tr>
+                      {% endfor %}
+                  {% else %}
+                  <tr>
+                      <td colspan="22" class="px-4 py-3 text-center text-red-600 font-semibold">
+                          <h2>No hay Proveedores ( ꩜ ᯅ ꩜;)⁭ ⁭<h2>
+                      </td>
+                  </tr>
+                  {% endif %}
+              </tbody>
+          </table>
+          
+          </div>
+          <div class="flex pl-4 mt-4 w-full mx-auto">
+            <a href="{% url "create-p" %}" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded group">Crear Proveedor<i class="fa-solid fa-plus flex mt-1 items-center justify-center ml-1 transition-transform duration-300 group-hover:rotate-90"></i></a>
+          </div>
+        </div>
+      </section>
+    
+      <section class="text-gray-600 body-font w-full  overflow-auto hidden" id="section-supervisores">
+        <div class="container px-5 py-14 my-2 mx-auto bg-white shadow-lg rounded-lg overflow-y-auto">
+          <div class="flex flex-col text-center w-full mb-10">
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de Supervisores</h1>
+          </div>
+          <div class="w-full mx-auto overflow-auto">
+            <table class="table-auto w-full text-left whitespace-no-wrap bg-blue-200 rounded-t-md">
+              <thead class="">
+                  <tr class="w-full">
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tl-lg">Nombre</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Nit o C.C</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Cargo</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Telefono</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Email</th>
+                      <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Fecha de agregado</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% if supervisores %}
+                    {% for supervisor in supervisores %}
+                      <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
+                          <td class="px-4 py-3">{{ supervisor.nombre }}</td>
+                          <td class="px-4 py-3">{{ supervisor.nit_o_cc }}</td>
+                          <td class="px-4 py-3">{{ supervisor.cargo }}</td>
+                          <td class="px-4 py-3">{{ supervisor.telefono }}</td>
+                          <td class="px-4 py-3">{{ supervisor.email }}</td>
+                          <td class="px-4 py-3">{{ supervisor.fecha_agregado|date:"d/m/Y" }}</td>
+                          <td class="px-4 py-3">{{ supervisor.CDP_num }}</td>
+                      </tr>
+                    {% endfor %}
+                  {% else %}
+                  <tr>
+                      <td colspan="22" class="px-4 py-3 text-center text-red-600 font-semibold">
+                          <h2>No Supervisores ( ꩜ ᯅ ꩜;)⁭ ⁭</h2>
+                      </td>
+                  </tr>
+                  {% endif %}
+              </tbody>
+          </table>
+          
+          </div>
+          <div class="flex pl-4 mt-4 w-full mx-auto">
+            <a href="{% url "create-s" %}" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded group">Crear Supervisor<i class="fa-solid fa-plus flex mt-1 items-center justify-center ml-1 transition-transform duration-300 group-hover:rotate-90"></i></a>
+          </div>
+        </div>
+      </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{% static "js/personal.js" %}"></script>
+{% endblock scripts %}
+
+

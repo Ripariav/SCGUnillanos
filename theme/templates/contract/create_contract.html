@@ -1,0 +1,329 @@
+{% extends "dashboard.html" %} 
+{% load static tailwind_tags form_filters %}
+{% load static %}
+{% load form_filters %}
+{% block title %} SCG - Añadir Contrato {% endblock title %}
+
+{% block contentdash %}
+<section class="text-gray-600 body-font w-screen overflow-auto">
+    <div class="container px-5 py-14 my-10 mx-auto bg-white shadow-lg rounded-lg">
+        <div class="flex flex-col text-center w-full mb-10">
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Crear un nuevo contrato</h1>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Por favor, completa los detalles del contrato a continuación.</p>
+        </div>
+
+        {% if messages %}
+            <div class="mb-6">
+                <ul class="text-red-600">
+                    {% for message in messages %}
+                        <li>{{ message.0 }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="POST" class="w-full mx-auto">
+            {% csrf_token %}
+            <div class="flex flex-wrap -m-2">
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Datos principales</h1>
+                    <hr>
+                </div>
+
+                <!-- Numero de contrato -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="numero" class="leading-7 text-sm text-gray-600">Numero de Contrato</label>
+                        {{ form.numero_contrato|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Tipo de Contratación -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="codigo_unspsc" class="leading-7 text-sm text-gray-600">Tipo de Contratación</label>
+                        {{ form.tipo_contratacion|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Clase -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="observaciones" class="leading-7 text-sm text-gray-600">Clase</label>
+                        {{ form.clase|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+                
+            
+                <!-- Dependencia Responsable -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="dependencia_responsable" class="leading-7 text-sm text-gray-600">Dependencia Responsable</label>
+                        {{ form.dependencia_responsable|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"}}
+                    </div>
+                </div>
+
+                <!-- Valor Contrato -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_inicio" class="leading-7 text-sm text-gray-600">Valor del Contrarto</label>
+                        {{ form.valor|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+            
+                <!-- Descripción -->
+                <div class="p-2 w-full">
+                    <div class="relative">
+                        <label for="descripcion" class="leading-7 text-sm text-gray-600">Descripción</label>
+                        {{ form.descripcion|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                
+
+                {% comment %} DIVISION ------------------------------------------------------------ {% endcomment %}
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Datos Generales</h1>
+                    <hr>
+                </div>
+            
+                <!-- Fecha estimada de subscripcion del contrato -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">Fecha de subscripción de contrato</label>
+                        {{ form.fecha_suscripcion_contrato|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Plazo Inicio -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="plazo_inicio" class="leading-7 text-sm text-gray-600">Plazo de Inicio</label>
+                        {{ form.plazo_inicio|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+            
+                <!-- Plazo Fin -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="plazo_fin" class="leading-7 text-sm text-gray-600">Plazo Final</label>
+                        {{ form.plazo_fin|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+            
+                <!-- CDP y RP -->
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">CDP</h1>
+                    <hr>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">CDP</label>
+                        {{ form.CDP_num|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">CDP Fecha </label>
+                        {{ form.CDP_fecha|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">RP</h1>
+                    <hr>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">RP</label>
+                        {{ form.RP_num|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">RP Fecha</label>
+                        {{ form.RP_fecha|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Otros</h1>
+                    <hr>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">Rubro Presupuestal</label>
+                        {{ form.rubro_presupuestal|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">Numero de Poliza</label>
+                        {{ form.numero_poliza|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                
+
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">Fuente de Recursos</label>
+                        {{ form.fuente_recursos|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+            
+                <!-- Presupuesto Programado -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="presupuesto_programado" class="leading-7 text-sm text-gray-600">Presupuesto Programado</label>
+                        {{ form.presupuesto_programado|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+            
+                <!-- estado del Contrato -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label class="leading-7 text-sm text-gray-600">Estado del Contrato</label>
+                        {{ form.estado_contrato|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+                
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Archivo</h1>
+                    <hr>
+                </div>
+                <!-- Documentos Cargados -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="modalidad_seleccion" class="leading-7 text-sm text-gray-600">Documentos Cargados</label>
+                        {{ form.documentos_cargados|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="modalidad_seleccion" class="leading-7 text-sm text-gray-600">Fecha de Publicación Secop</label>
+                        {{ form.fecha_publicacion_secop|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="modalidad_seleccion" class="leading-7 text-sm text-gray-600">Secop</label>
+                        {{ form.publicacion_secop|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/12">
+                    <div class="relative">
+                        <label for="modalidad_seleccion" class="leading-7 text-sm text-gray-600">Almacen</label>
+                        {{ form.almacen|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="p-2 w-11/12">
+                    <div class="relative">
+                        <label for="modalidad_seleccion" class=" leading-7 text-sm text-gray-600">Fecha de Liquidacion</label>
+                        {{ form.fecha_liquidacion|add_class:" flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Asignaciones</h1>
+                    <hr>
+                </div>
+                
+                <!-- Supervisor -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="supervisor" class="leading-7 text-sm text-gray-600">Supervisor</label>
+                        <select name="supervisor" id="supervisor" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un supervisor</option>
+                            {% for supervisor in supervisor %}
+                                <option value="{{ supervisor.id }}"> {{ supervisor.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Contratista (Proveedor) -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="contratista" class="leading-7 text-sm text-gray-600">Contratista (Proveedor)</label>
+                        <select name="contratista" id="contratista" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un contratista</option>
+                            {% for contratista in contratista %}
+                                <option value="{{ contratista.id }}">{{ contratista.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Gestor -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="gestor" class="leading-7 text-sm text-gray-600">Gestor</label>
+                        <select name="gestor" id="gestor" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un gestor</option>
+                            {% for usuario in usuarios %}
+                                {% if 'Gestor' in usuario.roles.all|stringformat:"s" %}
+                                    <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <!-- Abogado -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="abogado" class="leading-7 text-sm text-gray-600">Abogado</label>
+                        <select name="abogado" id="abogado" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un abogado</option>
+                            {% for usuario in usuarios %}
+                                {% if 'Abogado' in usuario.roles.all|stringformat:"s" %}
+                                    <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Revisor -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="revisor" class="leading-7 text-sm text-gray-600">Revisor</label>
+                        <select name="revisor" id="revisor" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un revisor</option>
+                            {% for usuario in usuarios %}
+                                {% if 'Revisor' in usuario.roles.all|stringformat:"s" %}
+                                    <option value="{{ usuario.id }}">{{ usuario.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                        
+                <!-- Botón de Envío -->
+                <div class="flex justify-end w-full items-end">
+                    <div class="p-2  mt-4">
+                        <a href={% url "contrato" %} class="flex ml-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Cancelar</a>
+                    </div>
+                    <div class="p-2 mt-4">
+                        <button type="submit" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Crear Contrato</button>
+                    </div>
+                </div>
+                
+            </div>            
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock header %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static "js/calendar.js" %}"></script>
+{% endblock scripts %}

@@ -1,0 +1,106 @@
+{% extends "dashboard.html" %} {% load static tailwind_tags %} {% load static %} {% load humanize %}
+{% block contentdash %}
+<div class=" w-screen px-2 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Panel de Gestión de Contratos</h2>
+  
+      <p class="mt-4 text-gray-500 sm:text-xl">
+        Supervisa, analiza y gestiona todos tus contratos en un solo lugar con datos e informes en tiempo real.
+      </p>
+    </div>
+  
+    <div class="mt-10 ml-10 flex flex-row gap-4">
+      <div class="flex gap-4">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
+            <dt class="order-last text-lg font-medium text-gray-500">Numero Contratos Vencidos</dt>
+      
+            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{num_contratos_pen}}</dd>
+          </div>
+      
+          <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
+            <dt class="order-last text-lg font-medium text-gray-500">Cantitad Total de Contratos</dt>
+      
+            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{canti_contratos}}</dd>
+          </div>
+        </div>
+    
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
+            <dt class="order-last text-lg font-medium text-gray-500">Contratos Activos</dt>
+      
+            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{num_contratos_act}}</dd>
+          </div>
+      
+          <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
+            <dt class="order-last text-lg font-medium text-gray-500">Dinero invertido hasta la fecha</dt>
+      
+            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ num_precio_act|floatformat:0|intcomma }}</dd>
+          </div>
+        </div>
+      </div>
+
+    <div class=" ml-10 flex flex-row gap-4 overflow-y-auto overflow-x-hidden">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 md:min-w-[800px] h-72">
+          <h1 class="text-2xl font-bold  text-center mb-5">Contratos Vencidos</h1>
+          <div class="text-lg font-medium text-gray-500">
+            <ul class="justify-start flex flex-col">
+              <table class="gap-4">
+                <thead>
+                  <tr class="text-black">
+                    <th class="text-left">Número de Contrato</th>
+                    
+                    <th class="text-left">Descripción</th>
+                    <th class="text-left">Fecha de Vencimiento</th>
+                  </tr>
+                  <span class="relative flex justify-center mb-4">
+                      <div
+                        class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-transparent bg-gradient-to-r from-transparent via-gray-500 to-transparent opacity-75"
+                      ></div>
+                  </span>
+                </thead>
+                {% for contrato in contratos %}
+                  {% if contrato.plazo_fin|date:'Y-m-d' < hoy|date:'Y-m-d' %}
+                    <tr class="mb-2">
+                      <td> <a href="{% url 'contrato_detalle' contrato.id %}" class="text-blue-400 hover:underline hover:text-blue-500">{{ contrato.numero_contrato }}</a></td>
+                      <td>{{ contrato.descripcion|truncatechars:30 }}</td>
+                      <td class="text-red-400">{{ contrato.plazo_fin }}</td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+              </table>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    </div>
+
+    <div class="flex flex-col items-center justify-center mt-10 ">
+        <h2 class="text-3xl font-bold mb-6">Dashboard - Estadísticas</h2>
+      
+        <div class="container p-4 flex flex-col bg-white shadow-lg rounded-lg">
+          <div class="flex flex-row gap-20 mt-4 flex-wrap items-center justify-center">
+            <div id="bar-chart" style="width: 250px; height: 250px;"></div>
+            <div id="line-chart" style="width: 250px; height: 250px;"></div>
+            <div id="pie-chart" style="width: 250px; height: 250px;"></div>
+        
+            <script id="bar-data" type="application/json">
+              {{ bar_data|safe }}
+            </script>
+            <script id="line-data" type="application/json">
+              {{ line_data|safe }}
+            </script>
+            <script id="pie-data" type="application/json">
+              {{ pie_data|safe }}
+            </script>
+          </div>
+        </div>
+{% endblock contentdash %} 
+        
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script src="{% static 'js/stats.js' %}"></script>
+{% endblock scripts %}

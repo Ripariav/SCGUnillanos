@@ -1,0 +1,191 @@
+{% extends "dashboard.html" %} {% load static tailwind_tags form_filters %}
+{% load static %}
+{% load form_filters %}
+{% block title %} SCG - Contratos {% endblock title %}
+{% block contentdash %}
+
+<section class="text-gray-600 body-font w-screen  overflow-auto">
+    <div class="container px-5 py-14 my-10 mx-auto bg-white shadow-lg rounded-lg overflow-y-auto">
+      <div class="flex flex-col text-center w-full mb-10">
+        <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de contratos</h1>
+        <p class="lg:w-2/3 mx-auto leading-relaxed text-base">¡Hola, {{user.username}}!</p>
+      </div>
+      <div class="flex justify-between">
+        <div class="my-4 flex justify-start items-start">
+          <a href="{% url 'exportar_contratos' %}" class="flex text-white  bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded group">Exportar <i class="fa-solid fa-download ml-2"></i></a>
+        </div>
+        <div class="my-4 flex justify-start items-start">
+          <button  id="calendarChanger" class="flex text-white  bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded group"><i class="fa-regular fa-calendar"></i></button>
+        </div>
+      </div>
+      <!-- Añadir formulario de búsqueda y filtros -->
+      <form method="get" class="mb-6">
+          <div class="flex flex-wrap -mx-3 mb-2">
+              <div class="w-full md:w-1/5 px-3 mb-6 md:mb-0">
+                  <input type="text" name="search" placeholder="Buscar..." class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" value="{{ request.GET.search }}">
+              </div>
+              <div class="w-full md:w-1/5 px-3 mb-6 md:mb-0">
+                  <select name="supervisor" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                      <option value="">Supervisor</option>
+                      {% for supervisor in supervisores %}
+                          <option value="{{ supervisor.id }}" {% if request.GET.supervisor == supervisor.id|stringformat:"s" %}selected{% endif %}>{{ supervisor.nombre }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="w-full md:w-1/5 px-3 mb-6 md:mb-0">
+                  <select name="contratista" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                      <option value="">Contratista</option>
+                      {% for contratista in contratistas %}
+                          <option value="{{ contratista.id }}" {% if request.GET.contratista == contratista.id|stringformat:"s" %}selected{% endif %}>{{ contratista.nombre }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="w-full md:w-1/5 px-3 mb-6 md:mb-0">
+                  <select name="usuario_asociado" class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                      <option value="">Usuario Asociado</option>
+                      {% for usuario in usuarios %}
+                          <option value="{{ usuario.id }}" {% if request.GET.usuario_asociado == usuario.id|stringformat:"s" %}selected{% endif %}>{{ usuario.username }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="w-full md:w-1/5 px-3 mb-6 md:mb-0">
+                  <button type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                      Filtrar
+                  </button>
+              </div>
+          </div>
+      </form>
+      <div class="w-full mx-auto overflow-auto">
+        <table class="table-auto w-full text-left whitespace-no-wrap">
+          <thead class="bg-blue-200">
+              <tr>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tl-lg">Número de Contrato</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Tipo de Contratación</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Descripción</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Clase de Contrato</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Valor Final del Contrato</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Fecha Suscripción Contrato</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Alerta de Plazo de Contrato</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">CDP Número</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">CDP Fecha</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">RP Número</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">RP Fecha</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Rubro Presupuestal</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Número Póliza</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Fuente Recursos SIGEP</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Plazo Inicio</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Plazo Fin</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Estado del Contrato</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Documentos Cargados</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Fecha Publicación SECOP</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Publicación SECOP</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Almacén</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Fecha Liquidación</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Supervisor</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Contratista</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm ">Gestor</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tr-lg">Abogado</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% if contratos %}
+                  {% for contrato in contratos %}
+                  <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
+                      <td class="px-4 py-3"><a href="{% url 'contrato_detalle' contrato.id %}" class="text-indigo-500 hover:text-indigo-700">
+                        {{ contrato.numero_contrato }}</a></td>
+                      <td class="px-4 py-3">{{ contrato.tipo_contratacion }}</td>
+                      <td class="px-4 py-3">{{ contrato.descripcion|truncatechars:20 }}</td>
+                      <td class="px-4 py-3">{{ contrato.clase }}</td>
+                      <td class="px-4 py-3">{{ contrato.valor }}</td>
+                      <td class="px-4 py-3">{{ contrato.fecha_suscripcion_contrato|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3">
+                        {% if contrato.plazo_fin %}
+                          {% if contrato.plazo_fin|date:'Y-m-d' < hoy|date:'Y-m-d' %}
+                            <span class="bg-red-500 text-red-100 px-2 py-1 rounded">Vencido</span>
+                          {% else %}
+                            <span class="bg-green-500 text-green-100 px-2 py-1 rounded flex items-center justify-center">{{ contrato.plazo_fin|timeuntil:hoy }}</span>
+                          {% endif %}
+                        {% else %}
+                          Sin fecha de finalización
+                        {% endif %}
+                      </td>
+                      <td class="px-4 py-3">{{ contrato.CDP_num }}</td>
+                      <td class="px-4 py-3">{{ contrato.CDP_fecha|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3">{{ contrato.RP_num }}</td>
+                      <td class="px-4 py-3">{{ contrato.RP_fecha|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3">{{ contrato.rubro_presupuestal }}</td>
+                      <td class="px-4 py-3">{{ contrato.numero_poliza }}</td>
+                      <td class="px-4 py-3">{{ contrato.fuente_recursos }}</td>
+                      <td class="px-4 py-3">{{ contrato.plazo_inicio|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3">{{ contrato.plazo_fin|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3">{{ contrato.estado_contrato }}</td>
+                      <td class="px-4 py-3 flex items-center justify-center mt-4"><a href="{{ contrato.documentos_cargados }}" target="_blank" class="p-3 rounded-full bg-indigo-500 text-white hover:bg-indigo-200 hover:text-black transition-all"><i class="fa-regular fa-folder-open"></i></a></td>
+                      <td class="px-4 py-3">{{ contrato.fecha_publicacion_secop|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3 flex items-center justify-center mt-4"><a class="p-3 rounded-full bg-indigo-500 text-white hover:bg-indigo-200 hover:text-black transition-all" href="{{ contrato.publicacion_secop }}" target="_blank"><i class="fa-solid fa-desktop"></i></a></td>
+                      <td class="px-4 py-3">{{ contrato.almacen|yesno:"Sí,No" }}</td>
+                      <td class="px-4 py-3">{{ contrato.fecha_liquidacion|date:"d/m/Y" }}</td>
+                      <td class="px-4 py-3">{{ contrato.supervisor }}</td>
+                      <td class="px-4 py-3">{{ contrato.contratista }}</td>
+                      <td class="px-4 py-3">{{ contrato.gestor }}</td>
+                      <td class="px-4 py-3">{{ contrato.abogado }}</td>
+                  </tr>
+                  {% endfor %}
+              {% else %}
+              <tr>
+                  <td colspan="22" class="px-4 py-3 text-center text-red-600 font-semibold">
+                      <h2>No hay contratos disponibles ( ꩜ ᯅ ꩜;)⁭ ⁭</h2>
+                  </td>
+              </tr>
+              {% endif %}
+          </tbody>
+      </table>
+      
+      </div>
+      <!-- Controles de paginación -->
+      <div class="flex justify-center mt-4">
+          <nav class="inline-flex rounded-md shadow">
+              {% if contratos.has_previous %}
+                  <a href="?page={{ contratos.previous_page_number }}" class="px-3 py-2 rounded-l-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                      Anterior
+                  </a>
+              {% endif %}
+              
+              <span class="px-3 py-2 text-sm font-medium text-gray-700 bg-white">
+                  Página {{ contratos.number }} de {{ contratos.paginator.num_pages }}
+              </span>
+              
+              {% if contratos.has_next %}
+                  <a href="?page={{ contratos.next_page_number }}" class="px-3 py-2 rounded-r-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                      Siguiente
+                  </a>
+              {% endif %}
+          </nav>
+      </div>
+      <div class="flex pl-4 mt-4 w-full mx-auto">
+        <a href="{% url "crear_contrato" %}" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded group">Añadir Contrato<i class="fa-solid fa-plus flex mt-1 items-center justify-center ml-1 transition-transform duration-300 group-hover:rotate-90"></i></a>
+      </div>
+      <div id="calendar" class="calendar hidden w-full h-[800px] mx-auto my-10"></div>
+    </div>
+    
+  </section>
+
+
+
+
+
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/main.min.css" rel="stylesheet" />
+
+{% endblock header %}
+
+{% block scripts %}
+<script>
+  window.contractsData = {{ contratos_json | safe }};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.15/index.global.min.js"></script>
+<script src="{% static "js/calendar.js" %}"></script>
+{% endblock scripts %}

@@ -39,8 +39,14 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
 
+    #extra
+    'django.contrib.humanize',
+
     #myapps
     'main',
+    'workspace',
+    'controlpanel',
+    
 
 ]
 
@@ -71,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'workspace.context_processors.user_role',
+                
             ],
         },
     },
@@ -81,16 +89,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 if PRODUCTION and not DEBUG:
-    print(os.getenv('DATABASE_URL'))
     DATABASES = {
         'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
     }
 elif PRODUCTION and DEBUG:
-    print(os.getenv('DATABASE_PUBLIC_URL'))
     DATABASES = {
-        'default': dj_database_url.config(default=os.getenv('DATABASE_PUBLIC_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
+        'CONN_MAX_AGE': 0,
+        'CONN_HEALTH_CHECKS': False,
+        'DISABLE_SERVER_SIDE_CURSORS': False,
+        }
     }
 else:
     DATABASES = {

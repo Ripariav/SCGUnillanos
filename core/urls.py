@@ -21,5 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
     #own apps
-    path('', include('main.urls'))
+    path('', include('main.urls')),
+    path('', include('workspace.urls')),
+    path('', include('controlpanel.urls'))
 ]

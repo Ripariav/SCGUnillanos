@@ -1,15 +1,24 @@
 {% extends "dashboard.html" %} {% load static tailwind_tags form_filters %}
-{% load static %}
+{% load static %} {% load humanize %}
 {% load form_filters %}
 {% block title %} SCG - Contratos {% endblock title %}
 {% block contentdash %}
 
 <section class="text-gray-600 body-font w-screen  overflow-auto">
-    <div class="container px-5 py-14 my-10 mx-auto bg-white shadow-lg rounded-lg overflow-y-auto">
+    <div class="container px-5 py-14 my-10 ml-10 bg-white shadow-lg rounded-lg overflow-y-auto max-w-[1400px]">
       <div class="flex flex-col text-center w-full mb-10">
         <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de contratos</h1>
         <p class="lg:w-2/3 mx-auto leading-relaxed text-base">¡Hola, {{user.username}}!</p>
       </div>
+      {% if messages %}
+            <div class="mb-6">
+                <ul class="text-blue-600">
+                    {% for message in messages %}
+                        <li>{{ message.0 }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
       <div class="flex justify-between">
         <div class="my-4 flex justify-start items-start">
           <a href="{% url 'exportar_contratos' %}" class="flex text-white  bg-indigo-500 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-600 rounded group">Exportar <i class="fa-solid fa-download ml-2"></i></a>
@@ -96,17 +105,31 @@
                       <td class="px-4 py-3">{{ contrato.tipo_contratacion }}</td>
                       <td class="px-4 py-3">{{ contrato.descripcion|truncatechars:20 }}</td>
                       <td class="px-4 py-3">{{ contrato.clase }}</td>
-                      <td class="px-4 py-3">{{ contrato.valor }}</td>
+                      <td class="px-4 py-3">{{ contrato.valor|floatformat:0|intcomma }}</td>
                       <td class="px-4 py-3">{{ contrato.fecha_suscripcion_contrato|date:"d/m/Y" }}</td>
                       <td class="px-4 py-3">
                         {% if contrato.plazo_fin %}
-                          {% if contrato.plazo_fin|date:'Y-m-d' < hoy|date:'Y-m-d' %}
-                            <span class="bg-red-500 text-red-100 px-2 py-1 rounded">Vencido</span>
-                          {% else %}
-                            <span class="bg-green-500 text-green-100 px-2 py-1 rounded flex items-center justify-center">{{ contrato.plazo_fin|timeuntil:hoy }}</span>
-                          {% endif %}
-                        {% else %}
-                          Sin fecha de finalización
+                            {% if contrato.dias_restantes is not None %}
+                                {% if contrato.dias_restantes < 0 %}
+                                    <a href="mailto:{{ contrato.supervisor.email }}?subject=Aviso%20de%20contrato%20vencido&body=Estimado%20{{ contrato.supervisor.nombre }},%0D%0A%0D%0AEl%20contrato%20N%C2%B0%20{{ contrato.numero_contrato }}%20venci%C3%B3%20el%20{{ contrato.plazo_fin }}.%0D%0A%0D%0AFavor%20realizar%20las%20gestiones%20correspondientes.%0D%0A%0D%0ASaludos%20cordiales,%0D%0A{{user.email}}" 
+                                        target="_blank" 
+                                        class="bg-red-500 text-red-100 px-2 py-1 rounded text-sm cursor-pointer">
+                                        Vencido
+                                    </a>
+                                {% elif contrato.dias_restantes < 10 %}
+                                    <a href="mailto:{{ contrato.supervisor.email }}?subject=Aviso%20de%20vencimiento%20de%20contrato&body=Estimado%20{{ contrato.supervisor.nombre }},%0D%0A%0D%0AEl%20contrato%20N%C2%B0%20{{ contrato.numero_contrato }}%20est%C3%A1%20pr%C3%B3ximo%20a%20vencer.%20La%20fecha%20l%C3%ADmite%20es%20{{ contrato.plazo_fin }}.%0D%0A%0D%0AQuedamos%20atentos%20a%20su%20gesti%C3%B3n.%0D%0A%0D%0ASaludos%20cordiales,%0D%0A{{user.email}}" 
+                                        target="_blank" 
+                                        class="bg-yellow-500 text-red-100 px-2 py-1 rounded flex items-center justify-center text-sm cursor-pointer">
+                                        {{ contrato.plazo_fin|timeuntil:hoy }}, Por Vencer
+                                    </a>
+                                {% else %}
+                                    <span class="bg-green-500 text-green-100 px-2 py-1 rounded flex items-center justify-center text-sm ">
+                                        {{ contrato.plazo_fin|timeuntil:hoy }}
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                Sin fecha de finalización
+                            {% endif %}
                         {% endif %}
                       </td>
                       <td class="px-4 py-3">{{ contrato.CDP_num }}</td>

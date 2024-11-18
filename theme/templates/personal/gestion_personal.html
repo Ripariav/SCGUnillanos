@@ -6,24 +6,24 @@
 <div class="w-screen mx-auto flex flex-col gap-5 items-center">
 
   <div class="flex items-center justify-center mt-10" id="gestor-ps">
-    <div class="flex space-x-2 border-[3px] border-indigo-400 rounded-xl select-none">
+    <div class="flex space-x-2 border-[3px] border-indigo-200 rounded-xl select-none text-bold">
         <label class="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer">
             <input type="radio" name="radio" value="supervisores" class="peer hidden" checked />
-            <span class="tracking-widest  peer-checked:bg-indigo-400 text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out">Supervisores</span>
+            <span class="tracking-widest  peer-checked:bg-blue-200 text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out">Supervisores</span>
         </label>
 
         <label class="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer">
             <input type="radio" name="radio" value="proveedores" class="peer hidden" />
-            <span class="tracking-widest peer-checked:bg-indigo-400 text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out">Proveedores</span>
+            <span class="tracking-widest peer-checked:bg-blue-200 text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out ">Contratistas</span>
         </label>
     </div>
 </div>
 
 
     <section class="text-gray-600 body-font w-full  overflow-auto" id="section-proveedores">
-        <div class="container px-5 py-14 my-2 mx-auto bg-white shadow-lg rounded-lg overflow-y-auto">
+        <div class="container px-5 py-14 my-2  ml-10 max-w-[1400px] bg-white shadow-lg rounded-lg overflow-y-auto">
           <div class="flex flex-col text-center w-full mb-10">
-            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de Proveedores</h1>
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de Contratistas</h1>
           </div>
           <div class="w-full mx-auto overflow-auto">
             <table class="table-auto w-full text-left whitespace-no-wrap bg-blue-200 rounded-t-md">
@@ -42,7 +42,8 @@
                   {% if contratistas %}
                       {% for contratista in contratistas %}
                       <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
-                          <td class="px-4 py-3">{{ contratista.nombre }}</td>
+                          <td class="px-4 py-3"><a href="{% url 'editar_contratista' contratista.nombre %}" class="text-indigo-500 hover:text-indigo-700">
+                            {{ contratista.nombre }}</a></td>
                           <td class="px-4 py-3">{{ contratista.nit_o_cc }}</td>
                           <td class="px-4 py-3">{{ contratista.representante_legal }}</td>
                           <td class="px-4 py-3">{{ contratista.nit_o_cc_representante_legal }}</td>
@@ -69,7 +70,7 @@
       </section>
     
       <section class="text-gray-600 body-font w-full  overflow-auto hidden" id="section-supervisores">
-        <div class="container px-5 py-14 my-2 mx-auto bg-white shadow-lg rounded-lg overflow-y-auto">
+        <div class="container px-5 py-14 my-2  ml-10 max-w-[1400px] bg-white shadow-lg rounded-lg overflow-y-auto">
           <div class="flex flex-col text-center w-full mb-10">
             <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Seccion de Supervisores</h1>
           </div>
@@ -89,7 +90,8 @@
                   {% if supervisores %}
                     {% for supervisor in supervisores %}
                       <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
-                          <td class="px-4 py-3">{{ supervisor.nombre }}</td>
+                          <td class="px-4 py-3"><a href="{% url 'editar_supervisor' supervisor.nombre %}" class="text-indigo-500 hover:text-indigo-700">
+                            {{ supervisor.nombre }}</a></td>
                           <td class="px-4 py-3">{{ supervisor.nit_o_cc }}</td>
                           <td class="px-4 py-3">{{ supervisor.cargo }}</td>
                           <td class="px-4 py-3">{{ supervisor.telefono }}</td>

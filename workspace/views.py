@@ -31,9 +31,10 @@ def crear_contrato(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'El contrato ha sido creado con éxito.')
-            return redirect('crear_contrato')  # Redirige a la misma página o a donde desees
+            return redirect('contrato')  # Redirige a la misma página o a donde desees
         else:
             messages.error(request, 'Hubo un error al crear el contrato. Verifica los campos.')
+            print(form.errors)  # Imprimir errores para depuración
     else:
         form = ContratoForm()
 
@@ -51,6 +52,13 @@ def crear_contrato(request):
 def contratosview(request):
     contratos = Contrato.objects.all().order_by('-id')  # Ordenamos por ID de forma descendente
     hoy = date.today()
+
+    # Cálculo de días restantes
+    for contrato in contratos:
+        if contrato.plazo_fin:
+            contrato.dias_restantes = (contrato.plazo_fin - hoy).days
+        else:
+            contrato.dias_restantes = None
 
     # Búsqueda
     search_query = request.GET.get('search')
@@ -162,6 +170,18 @@ def contratodetailsview(request, contrato_id):
     }
     return render(request, 'contract/contract_detail.html', context)
 
+@login_required
+def borrar_contrato(request, contrato_id):
+    contrato = get_object_or_404(Contrato, id=contrato_id)
+    if request.method == 'POST':
+        contrato.delete()
+        messages.success(request, 'El contrato ha sido eliminado con éxito.')
+        return redirect('contrato')
+    else:
+        messages.error(request, 'No se puede eliminar el contrato.')
+    
+    return redirect('contrato_detalle', contrato_id=contrato.id)
+
 # Personal ---------------------------------------------------------------------------------------------------------------------
 @login_required
 def personalview(request):
@@ -212,8 +232,8 @@ def personal_p_view(request):
     return render(request, 'personal/create_contratista.html', context)
 
 @login_required
-def personal_s_update(request, supervisor_id):
-    supervisor = get_object_or_404(Supervisor, id=supervisor_id)
+def personal_s_update(request, nombre_supervisor):
+    supervisor = get_object_or_404(Supervisor, nombre=nombre_supervisor)
     if request.method == 'POST':
         form = SupervisorForm(request.POST, instance=supervisor)
         if form.is_valid():
@@ -230,22 +250,45 @@ def personal_s_update(request, supervisor_id):
     return render(request, 'personal/update_supervisor.html', context)
 
 @login_required
-def personal_p_update(request, contratista_id):
-    contratista = get_object_or_404(Contratista, id=contratista_id)
+def personal_p_update(request, nombre_contratista):
+    contratista = get_object_or_404(Contratista, nombre=nombre_contratista)
     if request.method == 'POST':
         form = ContratistaForm(request.POST, instance=contratista)
         if form.is_valid():
             form.save()
             messages.success(request, 'El Contratista ha sido actualizado con éxito.')
-            return redirect('sp')  # Redirige a la misma página o a donde desees
+            return redirect('sp')
         else:
             messages.error(request, 'Hubo un error al actualizar el Contratista. Verifica los campos.')
     else:
         form = ContratistaForm(instance=contratista)
     context = {
-        'form': form
+        'form': form,
+        'contratista': contratista
     }
     return render(request, 'personal/update_contratista.html', context)
+
+@login_required
+def personal_s_delete(request, supervisor_id):
+    supervisor = get_object_or_404(Supervisor, id=supervisor_id)
+    if request.method == 'POST':
+        supervisor.delete()
+        messages.success(request, 'El Supervisor ha sido eliminado con éxito.')
+        return redirect('sp')  # Redirige a la lista de supervisores
+    else:
+        messages.error(request, 'No se puede eliminar el Supervisor.')
+    return redirect('sp')
+
+@login_required
+def personal_p_delete(request, contratista_id):
+    contratista = get_object_or_404(Contratista, id=contratista_id)
+    if request.method == 'POST':
+        contratista.delete()
+        messages.success(request, 'El Contratista ha sido eliminado con éxito.')
+        return redirect('sp')  # Redirige a la lista de contratistas
+    else:
+        messages.error(request, 'No se puede eliminar el Contratista.')
+    return redirect('sp')
 
 # ---------------------------- FUNCIONAMIENTO ----------------------------
 # Estas vistas realizan procesos que no terminan en un render, sino que
@@ -289,3 +332,4 @@ def exportar_contratos_csv(request):
         ])
 
     return response
+

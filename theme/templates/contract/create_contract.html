@@ -6,22 +6,20 @@
 
 {% block contentdash %}
 <section class="text-gray-600 body-font w-screen overflow-auto">
-    <div class="container px-5 py-14 my-10 mx-auto bg-white shadow-lg rounded-lg">
+    <div class="container px-5 py-14 my-10  ml-10 max-w-[1400px] bg-white shadow-lg rounded-lg">
         <div class="flex flex-col text-center w-full mb-10">
             <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Crear un nuevo contrato</h1>
             <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Por favor, completa los detalles del contrato a continuación.</p>
         </div>
-
         {% if messages %}
-            <div class="mb-6">
-                <ul class="text-red-600">
-                    {% for message in messages %}
-                        <li>{{ message.0 }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
+        <div class="mb-6">
+            <ul class="text-blue-600">
+                {% for message in messages %}
+                    <li>{{ message.0 }}</li>
+                {% endfor %}
+            </ul>
+        </div>
         {% endif %}
-
         <form method="POST" class="w-full mx-auto">
             {% csrf_token %}
             <div class="flex flex-wrap -m-2">

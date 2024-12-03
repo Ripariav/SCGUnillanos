@@ -52,7 +52,7 @@ def homeview(request):
 
         contratos_data.append({
             'numero_contrato': contrato.numero_contrato,
-            'descripcion': contrato.descripcion,
+            'objeto': contrato.objeto,
             'plazo_fin': contrato.plazo_fin.isoformat() if contrato.plazo_fin else None,
             'dias_restantes': dias_restantes,
             'estado': estado,

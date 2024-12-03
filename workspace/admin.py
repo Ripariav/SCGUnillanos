@@ -9,14 +9,14 @@ class ContratoAdmin(admin.ModelAdmin):
     list_display = (
         'numero_contrato',       # Cambiado de 'codigo_unspsc' a 'numero_contrato'
         'dependencia_responsable', 
-        'descripcion', 
+        'objeto', 
         'plazo_inicio',          # Cambiado de 'fecha_estimada_inicio' a 'plazo_inicio'
         'plazo_fin'              # Cambiado de 'fecha_estimada_ofertas' a 'plazo_fin'
     )
     search_fields = (
         'numero_contrato',       # Ajuste similar aquí
         'dependencia_responsable', 
-        'descripcion'
+        'objeto'
     )
     list_filter = (
         'plazo_inicio',          # Ajuste basado en el nuevo modelo

@@ -12,9 +12,9 @@ urlpatterns = [
     # Personal
     path('personal/', views.personalview, name='sp'),
     path('crear-supervisor/', views.personal_s_view, name='create-s'),
-    path('editar-supervisor/<str:nombre_supervisor>/', views.personal_s_update, name='editar_supervisor'),
-    path('borrar-supervisor/<str:nombre_supervisor>/', views.personal_s_delete, name='borrar_supervisor'),
+    path('editar-supervisor/<int:supervisor_id>/', views.personal_s_update, name='editar_supervisor'),
+    path('borrar-supervisor/<int:supervisor_id>/', views.personal_s_delete, name='borrar_supervisor'),
     path('crear-contratista/', views.personal_p_view, name='create-p'),
-    path('editar-contratista/<str:nombre_contratista>/', views.personal_p_update, name='editar_contratista'),
-    path('borrar-contratista/<str:nombre_contratista>/', views.personal_p_delete, name='borrar_contratista'),
+    path('editar-contratista/<int:contratista_id>/', views.personal_p_update, name='editar_contratista'),
+    path('borrar-contratista/<int:contratista_id>/', views.personal_p_delete, name='borrar_contratista'),
 ]

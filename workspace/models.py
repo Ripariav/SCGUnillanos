@@ -84,7 +84,7 @@ class Contrato(models.Model):
     #Fundamentales
     numero_contrato = models.IntegerField(unique=True, blank=True, null=True, default=0)
     tipo_contratacion = models.CharField(max_length=600, choices=MODALIDAD_SELECCION_CHOICES, default="noinfo")
-    descripcion = models.TextField(blank=True, null=True, default="no se ha presentado objeto")
+    objeto = models.TextField(blank=True, null=True, default="no se ha presentado objeto")
     clase = models.CharField(max_length=600, choices=CLASE_CONTRATO_CHOICES, blank=True, null=True)
     valor = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True, default=0)  # final
 
@@ -99,8 +99,8 @@ class Contrato(models.Model):
     rubro_presupuestal = models.CharField(blank=True,null=True, max_length=500)
     # polizas
     numero_poliza = models.PositiveIntegerField(
-        blank=True, 
-        null=True, 
+        blank=True,
+        null=True,  
         validators=[MinValueValidator(0, message="El número de póliza debe ser un entero positivo.")],
         default=0
     )
@@ -121,12 +121,11 @@ class Contrato(models.Model):
     #documentos
     documentos_cargados = models.URLField(max_length=600, blank=True, null=True)
     #Secop
-    fecha_publicacion_secop = models.DateField(blank=True, null=True)
+    fecha_publicacion_secop = models.DateField(blank=True, null=True, default="www.unillanos.edu.co")
     publicacion_secop = models.URLField(
         max_length=600, 
-        blank=True, 
-        null=True, 
-        validators=[URLValidator(message="Ingrese una URL válida o deje el campo en blanco.")]
+        blank=True,
+        null=True,
     )
     #Almacen
     almacen = models.BooleanField(default=False)
@@ -145,8 +144,8 @@ class Contrato(models.Model):
     prorroga = models.ForeignKey(Prorroga, on_delete=models.SET_NULL, blank=True, null=True)
 
     # gestores involucrados
-    contratista = models.ForeignKey(Contratista, on_delete=models.CASCADE, blank=True, null=True)
-    supervisor = models.ForeignKey(Supervisor, on_delete=models.CASCADE, blank=True, null=True)
+    contratista = models.ForeignKey(Contratista, on_delete=models.SET_NULL, blank=True, null=True)
+    supervisor = models.ForeignKey(Supervisor, on_delete=models.SET_NULL, blank=True, null=True)
 
     # Usuarios involucrados
     gestor = models.ForeignKey(User, related_name='gestor_contratos', on_delete=models.SET_NULL, null=True, blank=True)
@@ -165,6 +164,7 @@ class Contrato(models.Model):
         
         if self.numero_poliza == '':
             self.numero_poliza = None
+
 
 class Rol(models.Model):
     USUARIO_ROLES = (

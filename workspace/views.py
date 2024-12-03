@@ -50,7 +50,9 @@ def crear_contrato(request):
 
 @login_required
 def contratosview(request):
+
     contratos = Contrato.objects.all().order_by('-id')  # Ordenamos por ID de forma descendente
+
     hoy = date.today()
 
     # Cálculo de días restantes
@@ -65,7 +67,7 @@ def contratosview(request):
     if search_query:
         contratos = contratos.filter(
             Q(numero_contrato__icontains=search_query) |
-            Q(descripcion__icontains=search_query)
+            Q(objeto__icontains=search_query)
         )
 
     # Filtros
@@ -106,7 +108,7 @@ def contratosview(request):
 
         contratos_data.append({
             'numero_contrato': contrato.numero_contrato,
-            'descripcion': contrato.descripcion,
+            'objeto': contrato.objeto,
             'plazo_fin': contrato.plazo_fin.isoformat() if contrato.plazo_fin else None,
             'dias_restantes': dias_restantes,
             'estado': estado,
@@ -232,26 +234,27 @@ def personal_p_view(request):
     return render(request, 'personal/create_contratista.html', context)
 
 @login_required
-def personal_s_update(request, nombre_supervisor):
-    supervisor = get_object_or_404(Supervisor, nombre=nombre_supervisor)
+def personal_s_update(request, supervisor_id):
+    supervisor = get_object_or_404(Supervisor, id=supervisor_id)
     if request.method == 'POST':
         form = SupervisorForm(request.POST, instance=supervisor)
         if form.is_valid():
             form.save()
             messages.success(request, 'El Supervisor ha sido actualizado con éxito.')
-            return redirect('sp')  # Redirige a la misma página o a donde desees
+            return redirect('sp')
         else:
             messages.error(request, 'Hubo un error al actualizar el Supervisor. Verifica los campos.')
     else:
         form = SupervisorForm(instance=supervisor)
     context = {
-        'form': form
+        'form': form,
+        'supervisor': supervisor
     }
     return render(request, 'personal/update_supervisor.html', context)
 
 @login_required
-def personal_p_update(request, nombre_contratista):
-    contratista = get_object_or_404(Contratista, nombre=nombre_contratista)
+def personal_p_update(request, contratista_id):
+    contratista = get_object_or_404(Contratista, id=contratista_id)
     if request.method == 'POST':
         form = ContratistaForm(request.POST, instance=contratista)
         if form.is_valid():
@@ -273,20 +276,24 @@ def personal_s_delete(request, supervisor_id):
     supervisor = get_object_or_404(Supervisor, id=supervisor_id)
     if request.method == 'POST':
         supervisor.delete()
+        print(f"El supervisor con ID {supervisor_id} ha sido eliminado.")
         messages.success(request, 'El Supervisor ha sido eliminado con éxito.')
         return redirect('sp')  # Redirige a la lista de supervisores
     else:
+        print(f"El supervisor con ID {supervisor_id} no ha sido eliminado.")
         messages.error(request, 'No se puede eliminar el Supervisor.')
-    return redirect('sp')
+    return render(request, 'personal/update_supervisor.html')
 
 @login_required
 def personal_p_delete(request, contratista_id):
     contratista = get_object_or_404(Contratista, id=contratista_id)
     if request.method == 'POST':
         contratista.delete()
+        print(f"El supervisor con ID {contratista_id} ha sido eliminado.")
         messages.success(request, 'El Contratista ha sido eliminado con éxito.')
         return redirect('sp')  # Redirige a la lista de contratistas
     else:
+        print(f"El supervisor con ID {contratista_id} NO sido eliminado.")
         messages.error(request, 'No se puede eliminar el Contratista.')
     return redirect('sp')
 

@@ -30,9 +30,16 @@ document.addEventListener('DOMContentLoaded', function () {
         events: window.contractsData.map(contract => ({
             title: contract.numero_contrato + ': ' + contract.descripcion,
             start: contract.plazo_fin,
-            url: contract.documentos_cargados // Si quieres que se redirija al documento cargado al hacer clic
+            url: `/contratos/${contract.id}/detalles/`,
+            // Puedes agregar más propiedades si es necesario
         })),
-        locale: 'es' // Establece el idioma en español
+        locale: 'es', // Establece el idioma en español
+        eventClick: function(info) {
+            // Evita el comportamiento predeterminado del enlace
+            info.jsEvent.preventDefault();
+            // Redirige a la URL del contrato
+            window.location.href = info.event.url;
+        }
     });
 
     // Renderiza el calendario

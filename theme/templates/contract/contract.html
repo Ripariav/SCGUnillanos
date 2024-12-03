@@ -68,9 +68,9 @@
         <table class="table-auto w-full text-left whitespace-no-wrap">
           <thead class="bg-blue-200">
               <tr>
-                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tl-lg">Número de Contrato</th>
+                  <th class="px-40 py-3 title-font tracking-wider font-medium text-gray-900 text-sm rounded-tl-lg">Objeto</th>
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Tipo de Contratación</th>
-                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Descripción</th>
+                  <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Número de Contrato</th>
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Clase de Contrato</th>
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Valor Final del Contrato</th>
                   <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm">Fecha Suscripción Contrato</th>
@@ -99,11 +99,11 @@
           <tbody>
               {% if contratos %}
                   {% for contrato in contratos %}
-                  <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
-                      <td class="px-4 py-3"><a href="{% url 'contrato_detalle' contrato.id %}" class="text-indigo-500 hover:text-indigo-700">
-                        {{ contrato.numero_contrato }}</a></td>
+                  <tr class="bg-white  border-b border-gray-200">
+                      <td class="px-4 py-3 "><a href="{% url 'contrato_detalle' contrato.id %}" class=" bg-blue-200 hover:bg-blue-300  rounded flex items-center justify-center p-4">{{ contrato.objeto|truncatechars:50 }}</a></td>
                       <td class="px-4 py-3">{{ contrato.tipo_contratacion }}</td>
-                      <td class="px-4 py-3">{{ contrato.descripcion|truncatechars:20 }}</td>
+                      <td class="px-4 py-3">
+                        {{ contrato.numero_contrato }}</td>
                       <td class="px-4 py-3">{{ contrato.clase }}</td>
                       <td class="px-4 py-3">{{ contrato.valor|floatformat:0|intcomma }}</td>
                       <td class="px-4 py-3">{{ contrato.fecha_suscripcion_contrato|date:"d/m/Y" }}</td>

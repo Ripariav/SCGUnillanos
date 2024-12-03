@@ -64,7 +64,7 @@
                   {% if contrato.plazo_fin|date:'Y-m-d' < hoy|date:'Y-m-d' %}
                     <tr class="mb-2">
                       <td> <a href="{% url 'contrato_detalle' contrato.id %}" class="text-blue-400 hover:underline hover:text-blue-500">{{ contrato.numero_contrato }}</a></td>
-                      <td>{{ contrato.descripcion|truncatechars:30 }}</td>
+                      <td>{{ contrato.objeto|truncatechars:30 }}</td>
                       <td class="text-red-400">{{ contrato.plazo_fin }}</td>
                     </tr>
                   {% endif %}

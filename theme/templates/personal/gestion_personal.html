@@ -42,7 +42,7 @@
                   {% if contratistas %}
                       {% for contratista in contratistas %}
                       <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
-                          <td class="px-4 py-3"><a href="{% url 'editar_contratista' contratista.nombre %}" class="text-indigo-500 hover:text-indigo-700">
+                          <td class="px-4 py-3"><a href="{% url 'editar_contratista' contratista.id %}" class="text-indigo-500 hover:text-indigo-700">
                             {{ contratista.nombre }}</a></td>
                           <td class="px-4 py-3">{{ contratista.nit_o_cc }}</td>
                           <td class="px-4 py-3">{{ contratista.representante_legal }}</td>
@@ -90,7 +90,7 @@
                   {% if supervisores %}
                     {% for supervisor in supervisores %}
                       <tr class="bg-white hover:bg-gray-100 border-b border-gray-200">
-                          <td class="px-4 py-3"><a href="{% url 'editar_supervisor' supervisor.nombre %}" class="text-indigo-500 hover:text-indigo-700">
+                          <td class="px-4 py-3"><a href="{% url 'editar_supervisor' supervisor.id %}" class="text-indigo-500 hover:text-indigo-700">
                             {{ supervisor.nombre }}</a></td>
                           <td class="px-4 py-3">{{ supervisor.nit_o_cc }}</td>
                           <td class="px-4 py-3">{{ supervisor.cargo }}</td>

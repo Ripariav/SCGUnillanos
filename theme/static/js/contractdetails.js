@@ -1,12 +1,9 @@
-console.log('Archivo contractdetails.js cargado');
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, buscando el botón toggleEdicion');
     
     var toggleButton = document.getElementById('toggleEdicion');
     
     if (toggleButton) {
-        console.log('Botón toggleEdicion encontrado, añadiendo event listener');
         
         toggleButton.addEventListener('click', function() {
             console.log('Botón toggleEdicion clickeado');

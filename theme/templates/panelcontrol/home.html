@@ -1,6 +1,7 @@
 {% extends "dashboard.html" %} {% load static tailwind_tags %} {% load static %} {% load humanize %}
 {% block contentdash %}
-<div class=" ml-10 max-w-[1400px] px-2 py-8 sm:px-6 sm:py-12 lg:px-8">
+<section class="text-gray-600 body-font w-screen  overflow-auto">
+  <div class=" ml-10 w-screen px-2 py-8 sm:px-6 sm:py-12 lg:px-8 max-w-[1400px]">
     <div class="mx-auto max-w-3xl text-center">
       <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Panel de Gestión de Contratos</h2>
   
@@ -98,6 +99,7 @@
             </script>
           </div>
         </div>
+<section>
 {% endblock contentdash %} 
         
 {% block scripts %}

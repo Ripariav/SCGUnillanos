@@ -1,22 +1,22 @@
 {% extends "base.html" %} {% load static tailwind_tags %} {% load static %} 
 {% block content %}
 <div class="flex flex-row">
-  <div class="h-screen flex flex-col bg-slate-400 sticky border-r border-slate-700"  id="barra-lateral">
+  <div class="h-screen flex flex-col bg-gray-200 sticky border-r border-slate-200"  id="barra-lateral">
     <div class="mt-2 flex items-center justify-center ">
       <img src="{% static "img/logo.png" %}" alt="" class="w-16">
     </div>
     <ul class="m-2 mt-4 flex flex-col items-center justify-center text-2xl gap-3">
-      <li class=""><a href="{% url "home" %}"><i class="fa-solid fa-house text-slate-200  hover:scale-125 hover:text-slate-400 transition-all"></i></a></li>
-      <li class=""><a href="{% url "contrato" %}"><i class="fa-solid fa-list text-slate-200 hover:scale-125 hover:text-slate-400 transition-all"></i></a></li>
+      <li class=""><a href="{% url "home" %}"><i class="fa-solid fa-house  text-slate-800 hover:scale-125 hover:text-slate-700 transition-all"></i></a></li>
+      <li class=""><a href="{% url "contrato" %}"><i class="fa-solid fa-list text-slate-800 hover:scale-125 hover:text-slate-700 transition-all"></i></a></li>
       {% if rol.rol == 'gestor' %}
-        <li class=""><a href="{% url "sp" %}"><i class="fa-solid fa-address-book text-slate-200 hover:scale-125 hover:text-slate-400 transition-all"></i></a>
+        <li class=""><a href="{% url "sp" %}"><i class="fa-solid fa-address-book text-slate-800 hover:scale-125 hover:text-slate-700 transition-all"></i></a>
         </li>
       {% endif %}
-      <li class=""><a href="{% url "profile" %}"><i class="fa-solid fa-user text-slate-200 hover:scale-125 hover:text-slate-400 transition-all"></i></a></li>
+      <li class=""><a href="{% url "profile" %}"><i class="fa-solid fa-user text-slate-800 hover:scale-125 hover:text-slate-700 transition-all"></i></a></li>
     </ul>
     <div class="mt-auto flex items-center justify-center mb-4">
       <a href="{% url 'logout' %}" class="flex items-center justify-center">
-        <i class="fa-solid fa-right-from-bracket text-2xl text-slate-200 hover:scale-125 hover:text-slate-400 transition-all"><span class="absolute -top-14 left-1/2 transform -translate-x-1/2 z-20 px-4 py-2 text-sm font-bold text-white bg-gray-900 rounded-lg shadow-lg transition-transform duration-300 ease-in-out scale-0 group-hover:scale-100">Logout</span></i>
+        <i class="fa-solid fa-right-from-bracket text-2xl text-slate-800 hover:scale-125 hover:text-slate-700 transition-all"><span class="absolute -top-14 left-1/2 transform -translate-x-1/2 z-20 px-4 py-2 text-sm font-bold text-white bg-gray-900 rounded-lg shadow-lg transition-transform duration-300 ease-in-out scale-0 group-hover:scale-100">Logout</span></i>
       </a>
     </div>
   </div>

@@ -1,0 +1,163 @@
+{% extends "dashboard.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+{% load form_filters %}
+{% block title %} SCG - Crear Contratista {% endblock title %}
+{% block contentdash %}
+
+<section class="text-gray-600 body-font w-screen overflow-auto">
+    <div class="container px-5 py-14 my-10  ml-10 max-w-[1400px] bg-white shadow-lg rounded-lg">
+        <div class="flex flex-col text-center w-full mb-10">
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Crear un nuevo contratista</h1>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Por favor, completa los detalles del contratista a continuación.</p>
+        </div>
+
+        {% if messages %}
+            <div class="mb-6">
+                <ul class="text-red-600">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="flex flex-wrap -m-2">
+                <!-- Nombre -->
+                <div class="p-2 w-full md:w-1/2">
+                    <div class="relative">
+                        <label for="id_nombre" class="leading-7 text-sm text-gray-600">
+                            Nombre del Contratista
+                        </label>
+                        <input type="text" 
+                               id="id_nombre" 
+                               name="nombre" 
+                               value="{{ form.nombre.value|default:'' }}"
+                               required
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- NIT o CC -->
+                <div class="p-2 w-full md:w-1/2">
+                    <div class="relative">
+                        <label for="id_nit_o_cc" class="leading-7 text-sm text-gray-600">
+                            NIT o Cédula
+                        </label>
+                        <input type="number" 
+                               id="id_nit_o_cc" 
+                               name="nit_o_cc"
+                               value="{{ form.nit_o_cc.value|default:'' }}"
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Representante Legal -->
+                <div class="p-2 w-full md:w-1/2 hidden">
+                    <div class="relative">
+                        <label for="id_representante_legal" class="leading-7 text-sm text-gray-600">
+                            Representante Legal
+                        </label>
+                        <input type="text" 
+                               id="id_representante_legal" 
+                               name="representante_legal"
+                               value="No aplica"
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- NIT o CC Representante Legal -->
+                <div class="p-2 w-full md:w-1/2 hidden">
+                    <div class="relative">
+                        <label for="id_nit_o_cc_representante_legal" class="leading-7 text-sm text-gray-600">
+                            NIT o Cédula del Representante Legal
+                        </label>
+                        <input type="number" 
+                               id="id_nit_o_cc_representante_legal" 
+                               name="nit_o_cc_representante_legal"
+                               value=""
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="p-2 w-full md:w-1/2">
+                    <div class="relative">
+                        <label for="id_telefono" class="leading-7 text-sm text-gray-600">
+                            Teléfono
+                        </label>
+                        <input type="tel" 
+                               id="id_telefono" 
+                               name="telefono"
+                               value="{{ form.telefono.value|default:'' }}"
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="p-2 w-full md:w-1/2">
+                    <div class="relative">
+                        <label for="id_email" class="leading-7 text-sm text-gray-600">
+                            Correo Electrónico
+                        </label>
+                        <input type="email" 
+                               id="id_email" 
+                               name="email"
+                               value="{{ form.email.value|default:'' }}"
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Email Secundario -->
+                <div class="p-2 w-full md:w-1/2">
+                    <div class="relative">
+                        <label for="id_email_secundario" class="leading-7 text-sm text-gray-600">
+                            Correo Electrónico Secundario
+                        </label>
+                        <input type="email" 
+                               id="id_email_secundario" 
+                               name="email_secundario"
+                               value="{{ form.email_secundario.value|default:'' }}"
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Consorcio -->
+                <div class="p-2 w-full md:w-1/2 hidden">
+                    <div class="relative">
+                        <label for="id_consorcio" class="leading-7 text-sm text-gray-600">
+                            Consorcio
+                        </label>
+                        <input type="text" 
+                               id="id_consorcio" 
+                               name="consorcio"
+                               value="No aplica"
+                               class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end w-full items-end">
+                <div class="p-2 mt-4">
+                    <a href="{% url 'sp' %}" class="flex ml-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Cancelar</a>
+                </div>
+                <div class="p-2 mt-4">
+                    <button type="submit" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Crear Contratista</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock header %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static "js/calendar.js" %}"></script>
+{% endblock scripts %}

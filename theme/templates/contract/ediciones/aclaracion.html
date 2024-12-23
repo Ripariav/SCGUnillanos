@@ -1,0 +1,70 @@
+{% extends "dashboard.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+{% load form_filters %}
+{% block title %} Contrato - {{ contrato.numero_contrato }} - Aclaración {% endblock title %}
+
+{% block contentdash %}
+<section class="text-gray-600 body-font w-screen overflow-auto">
+    <div class="container px-5 py-14 my-10 ml-10 max-w-[1400px] bg-white shadow-lg rounded-lg">
+        <!-- Sección de Aclaraciones Existentes -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-medium text-gray-900 mb-4">Aclaraciones Existentes</h2>
+            {% if aclaraciones %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full table-auto">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left">Fecha Suscripción</th>
+                                <th class="px-4 py-2 text-left">Motivo</th>
+                                <th class="px-4 py-2 text-left">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for aclaracion in aclaraciones %}
+                            <tr class="border-b">
+                                <td class="px-4 py-2">{{ aclaracion.fecha_subscripcion|date:"d/m/Y" }}</td>
+                                <td class="px-4 py-2">{{ aclaracion.motivo }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="{% url 'borrar_aclaracion' contrato.id aclaracion.id %}" 
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No hay aclaraciones existentes.</p>
+            {% endif %}
+        </div>
+
+    <div class="mb-10">
+        <h2 class="text-2xl font-medium text-gray-900 mb-4">Crear Aclaración</h2>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="fecha_subscripcion" class="block text-sm font-medium text-gray-700">Fecha de Suscripción</label>
+                <input type="date" id="fecha_subscripcion" name="fecha_subscripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="mb-4">
+                <label for="motivo" class="block text-sm font-medium text-gray-700">Motivo</label>
+                <input type="text" id="motivo" name="motivo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div class="mb-4">
+                <label for="aclaracion" class="block text-sm font-medium text-gray-700">Aclaración</label>
+                <textarea id="aclaracion" name="aclaracion" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
+            </div>
+            <div class="flex justify-end w-full items-end">
+                <div class="p-2 mt-4">
+                    <a href="{% url 'contrato_detalle' contrato.id %}" class="flex ml-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Cancelar</a>
+                </div>
+                <div class="p-2 mt-4">
+                    <button type="submit" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Crear Aclaración</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    </div>
+</section>
+{% endblock contentdash %}

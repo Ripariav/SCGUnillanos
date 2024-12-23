@@ -1,0 +1,339 @@
+{% extends "dashboard.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+{% load form_filters %}
+
+{% block title %} Editar Contrato - {{ contrato.numero_contrato }} {% endblock title %}
+
+{% block contentdash %}
+<section class="text-gray-600 body-font w-screen overflow-auto">
+    <div class="container px-5 py-14 my-10 bg-white shadow-lg rounded-lg ml-10 max-w-[1400px]">
+        <div class="flex flex-col text-center w-full mb-10">
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Editar Contrato</h1>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Modifique los detalles del contrato.</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Por favor, corrige los siguientes errores:</strong>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="flex flex-wrap -m-2">
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Datos principales</h1>
+                    <hr>
+                </div>
+
+                <!-- Descripción -->
+                <div class="p-2 w-full">
+                    <div class="relative">
+                        <label for="objeto" class="leading-7 text-sm text-gray-600">Objeto</label>
+                        {{ form.objeto|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Numero de contrato (editable) -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="numero_contrato" class="leading-7 text-sm text-gray-600">Numero de Contrato</label>
+                        <input type="text" id="numero_contrato" name="numero_contrato" value="{{ contrato.numero_contrato }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Tipo de Contratación -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="codigo_unspsc" class="leading-7 text-sm text-gray-600">Tipo de Contratación</label>
+                        {{ form.tipo_contratacion|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Clase -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="observaciones" class="leading-7 text-sm text-gray-600">Clase</label>
+                        {{ form.clase|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Dependencia Responsable -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="dependencia_responsable" class="leading-7 text-sm text-gray-600">Dependencia Responsable</label>
+                        <input type="text" id="dependencia_responsable" name="dependencia_responsable" value="{{ contrato.dependencia_responsable }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Valor Contrato -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="valor" class="leading-7 text-sm text-gray-600">Valor del Contrato</label>
+                        <input type="number" id="valor" name="valor" value="{{ contrato.valor }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Datos Generales</h1>
+                    <hr>
+                </div>
+
+                <!-- Fecha de suscripción del contrato -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="fecha_suscripcion_contrato" class="leading-7 text-sm text-gray-600">Fecha de suscripción de contrato</label>
+                        <input type="date" id="fecha_suscripcion_contrato" name="fecha_suscripcion_contrato" value="{{ contrato.fecha_suscripcion_contrato|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Plazo Inicio -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="plazo_inicio" class="leading-7 text-sm text-gray-600">Plazo de Inicio</label>
+                        <input type="date" id="plazo_inicio" name="plazo_inicio" value="{{ contrato.plazo_inicio|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Plazo Fin -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="plazo_fin" class="leading-7 text-sm text-gray-600">Plazo Final</label>
+                        <input type="date" id="plazo_fin" name="plazo_fin" value="{{ contrato.plazo_fin|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- CDP y RP -->
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">CDP</h1>
+                    <hr>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="CDP_num" class="leading-7 text-sm text-gray-600">CDP</label>
+                        <input type="text" id="CDP_num" name="CDP_num" value="{{ contrato.CDP_num }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="CDP_fecha" class="leading-7 text-sm text-gray-600">CDP Fecha</label>
+                        <input type="date" id="CDP_fecha" name="CDP_fecha" value="{{ contrato.CDP_fecha|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">RP</h1>
+                    <hr>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="RP_num" class="leading-7 text-sm text-gray-600">RP</label>
+                        <input type="text" id="RP_num" name="RP_num" value="{{ contrato.RP_num }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="RP_fecha" class="leading-7 text-sm text-gray-600">RP Fecha</label>
+                        <input type="date" id="RP_fecha" name="RP_fecha" value="{{ contrato.RP_fecha|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Otros</h1>
+                    <hr>
+                </div>
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="rubro_presupuestal" class="leading-7 text-sm text-gray-600">Rubro Presupuestal</label>
+                        <input type="text" id="rubro_presupuestal" name="rubro_presupuestal" value="{{ contrato.rubro_presupuestal }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="numero_poliza" class="leading-7 text-sm text-gray-600">Numero de Poliza</label>
+                        <input type="text" id="numero_poliza" name="numero_poliza" value="{{ contrato.numero_poliza }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="fecha_estimada_ofertas" class="leading-7 text-sm text-gray-600">Fuente de Recursos</label>
+                        {{ form.fuente_recursos|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Presupuesto Programado -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="presupuesto_programado" class="leading-7 text-sm text-gray-600">Presupuesto Programado</label>
+                        <input type="number" id="presupuesto_programado" name="presupuesto_programado" value="{{ contrato.presupuesto_programado }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <!-- Estado del Contrato -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="estado_contrato" class="leading-7 text-sm text-gray-600">Estado del Contrato</label>
+                        {{ form.estado_contrato|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Archivo</h1>
+                    <hr>
+                </div>
+                <!-- Documentos Cargados -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="documentos_cargados" class="leading-7 text-sm text-gray-600">Documentos Cargados</label>
+                        <input type="text" id="documentos_cargados" name="documentos_cargados" value="{{ contrato.documentos_cargados }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="fecha_publicacion_secop" class="leading-7 text-sm text-gray-600">Fecha de Publicación Secop</label>
+                        <input type="date" id="fecha_publicacion_secop" name="fecha_publicacion_secop" value="{{ contrato.fecha_publicacion_secop|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="publicacion_secop" class="leading-7 text-sm text-gray-600">Secop</label>
+                        <input type="text" id="publicacion_secop" name="publicacion_secop" value="{{ contrato.publicacion_secop }}" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="p-2 w-1/12">
+                    <div class="relative">
+                        <label for="almacen" class="leading-7 text-sm text-gray-600">Almacen</label>
+                        <input type="checkbox" id="almacen" name="almacen" {% if contrato.almacen %}checked{% endif %} class="w-full h-8 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="p-2 w-11/12">
+                    <div class="relative">
+                        <label for="fecha_liquidacion" class="leading-7 text-sm text-gray-600">Fecha de Liquidacion</label>
+                        <input type="date" id="fecha_liquidacion" name="fecha_liquidacion" value="{{ contrato.fecha_liquidacion|date:'Y-m-d' }}" class="flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                    </div>
+                </div>
+
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Asignaciones</h1>
+                    <hr>
+                </div>
+
+                <!-- Supervisor -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="supervisor" class="leading-7 text-sm text-gray-600">Supervisor</label>
+                        <select name="supervisor" id="supervisor" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un supervisor</option>
+                            {% for supervisor in supervisores %}
+                                <option value="{{ supervisor.id }}" {% if contrato.supervisor.id == supervisor.id %}selected{% endif %}>{{ supervisor.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Contratista (Proveedor) -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="contratista" class="leading-7 text-sm text-gray-600">Contratista (Proveedor)</label>
+                        <select name="contratista" id="contratista" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un contratista</option>
+                            {% for contratista in contratistas %}
+                                <option value="{{ contratista.id }}" {% if contrato.contratista.id == contratista.id %}selected{% endif %}>{{ contratista.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Gestor -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="gestor" class="leading-7 text-sm text-gray-600">Gestor</label>
+                        <select name="gestor" id="gestor" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un gestor</option>
+                            {% for usuario in usuarios %}
+                                {% if 'Gestor' in usuario.roles.all|stringformat:"s" %}
+                                    <option value="{{ usuario.id }}" {% if contrato.gestor.id == usuario.id %}selected{% endif %}>{{ usuario.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Abogado -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="abogado" class="leading-7 text-sm text-gray-600">Abogado</label>
+                        <select name="abogado" id="abogado" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un abogado</option>
+                            {% for usuario in usuarios %}
+                                {% if 'Abogado' in usuario.roles.all|stringformat:"s" %}
+                                    <option value="{{ usuario.id }}" {% if contrato.abogado.id == usuario.id %}selected{% endif %}>{{ usuario.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Revisor -->
+                <div class="p-2 w-1/3">
+                    <div class="relative">
+                        <label for="revisor" class="leading-7 text-sm text-gray-600">Revisor</label>
+                        <select name="revisor" id="revisor" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+                            <option value="">Seleccione un revisor</option>
+                            {% for usuario in usuarios %}
+                                {% if 'Revisor' in usuario.roles.all|stringformat:"s" %}
+                                    <option value="{{ usuario.id }}" {% if contrato.revisor.id == usuario.id %}selected{% endif %}>{{ usuario.username }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="flex flex-col justify-center w-full items-center">
+                    <div class="p-2 mt-4">
+                        <button type="submit" class="flex ml-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded ">Guardar Cambios</button>
+                    </div>
+                    <div class="flex flex-row justify-center w-full items-center gap-4">
+                        <hr class="w-44 h-px border-gray-400">
+                        <h1 class="text-black">o</h1>
+                        <hr class="w-44 h-px border-gray-400">
+                    </div>
+                    <div class="flex justify-center mt-6 space-x-4">
+                        <a href="{% url 'contrato_detalle' contrato.id %}" class="bg-gray-500 text-white px-8 py-2 rounded hover:bg-gray-600">
+                            Cancelar
+                        </a>
+                    </div>
+
+                </div>
+            </div>           
+            
+        </form>
+        <div class="flex flex-row justify-center w-full items-center my-4 gap-4">
+            <hr class="w-44 h-px border-gray-400">
+            <h1 class="text-black">o</h1>
+            <hr class="w-44 h-px border-gray-400">
+        </div>
+        
+        <form method="POST" class="my-5 flex items-center justify-center " action="{% url 'borrar_contrato' contrato.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este contrato?');">
+            {% csrf_token %}
+            <button type="submit" class="bg-red-500 text-white px-6 py-2 rounded ">Eliminar Contrato</button>
+        </form>
+    </div>
+
+</section>
+{% endblock %}

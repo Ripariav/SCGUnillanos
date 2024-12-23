@@ -16,13 +16,13 @@
           <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
             <dt class="order-last text-lg font-medium text-gray-500">Numero Contratos Vencidos</dt>
       
-            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{num_contratos_pen}}</dd>
+            <dd class="text-4xl font-extrabold text-sky-800 md:text-5xl">{{num_contratos_pen}}</dd>
           </div>
       
           <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
             <dt class="order-last text-lg font-medium text-gray-500">Cantitad Total de Contratos</dt>
       
-            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{canti_contratos}}</dd>
+            <dd class="text-4xl font-extrabold text-sky-800 md:text-5xl">{{canti_contratos}}</dd>
           </div>
         </div>
     
@@ -30,13 +30,13 @@
           <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px]">
             <dt class="order-last text-lg font-medium text-gray-500">Contratos Activos</dt>
       
-            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{num_contratos_act}}</dd>
+            <dd class="text-4xl font-extrabold text-sky-800 md:text-5xl">{{num_contratos_act}}</dd>
           </div>
       
           <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center w-[300px] overflow-x-auto">
             <dt class="order-last text-lg font-medium text-gray-500">Dinero invertido hasta la fecha</dt>
       
-            <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">{{ num_precio_act|floatformat:0|intcomma }}</dd>
+            <dd class="text-4xl font-extrabold text-sky-800 md:text-5xl">{{ num_precio_act|floatformat:0|intcomma }}</dd>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@
                 {% for contrato in contratos %}
                   {% if contrato.plazo_fin|date:'Y-m-d' < hoy|date:'Y-m-d' %}
                     <tr class="mb-2">
-                      <td> <a href="{% url 'contrato_detalle' contrato.id %}" class="text-blue-400 hover:underline hover:text-blue-500">{{ contrato.numero_contrato }}</a></td>
+                      <td> <a href="{% url 'contrato_detalle' contrato.id %}" class="text-sky-700 hover:underline hover:text-sky-600">{{ contrato.numero_contrato }}</a></td>
                       <td>{{ contrato.objeto|truncatechars:30 }}</td>
                       <td class="text-red-400">{{ contrato.plazo_fin }}</td>
                     </tr>

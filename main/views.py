@@ -7,11 +7,13 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from workspace.models import User, Rol
 from django.contrib.auth.decorators import user_passes_test
+from .forms import AsignarRolForm
 
 # Create your views here.
 def user_login(request):
     user = None
-    
+    if request.user.is_authenticated:
+        return redirect('home')
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -29,29 +31,44 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-@login_required
-@require_POST
 @user_passes_test(lambda u: u.is_staff)
+@require_POST
 def assign_rol(request):
-    user_id = request.POST.get('user')
-    rol_name = request.POST.get('rol')
-    
-    try:
-        user = User.objects.get(id=user_id)
-        rol, created = Rol.objects.get_or_create(user=user, defaults={'rol': rol_name})
-        if not created:
-            rol.rol = rol_name
-            rol.save()
-        return JsonResponse({'success': True})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+    form = AsignarRolForm(request.POST)
+    if form.is_valid():
+        try:
+            rol = form.save()
+            return JsonResponse({
+                'success': True,
+                'message': f'Rol {rol.get_rol_display()} asignado correctamente a {rol.usuario.get_full_name()}'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            })
+    return JsonResponse({
+        'success': False,
+        'error': 'Datos del formulario inválidos'
+    })
 
 @login_required
 def profile_view(request):
-    context = {}
-    if request.user.is_staff:
-        context['users'] = User.objects.all()
+    # Obtener todos los usuarios excepto el superusuario
+    users = User.objects.exclude(is_superuser=True).order_by('first_name')
+    
+    # Obtener los roles de cada usuario
+    for user in users:
+        # Usamos roles_list como atributo temporal
+        user.roles_list = Rol.objects.filter(usuario=user)
+
+    context = {
+        'users': users,
+        'form': AsignarRolForm()
+    }
     return render(request, 'profile/profile.html', context)
+
+
 
 
 

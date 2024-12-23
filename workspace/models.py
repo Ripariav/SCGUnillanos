@@ -4,39 +4,40 @@ from django.contrib.auth.models import Group, Permission
 from django.core.validators import URLValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 
-
-# Choices
+ #Opciones
 MODALIDAD_SELECCION_CHOICES = [
-    ('Sin Clasificar', 'Sin Clasificar'),
-    ('Directa', 'Directa'),
-    ('Privada', 'Privada'),
-    ('Publica', 'Publica'),
-]
-
+        ('Sin Clasificar', 'Sin Clasificar'),
+        ('Directa', 'Directa'),
+        ('Privada', 'Privada'),
+        ('Publica', 'Publica'),
+    ]
 CLASE_CONTRATO_CHOICES = [
-    ('Arrendamiento', 'arrendamiento'),
-    ('Cesión Derechos Patrimoniales', 'cesion_derechos_patrimoniales'),
-    ('Compraventa', 'compraventa'),
-    ('Consultoría', 'consultoria'),
-    ('Interadministrativo', 'interadministrativo'),
-    ('Obra Pública', 'obra_publica'),
-    ('Orden Compra Colombia Compra Eficiente', 'orden_compra_colombia_compra_eficiente'),
-    ('Prestación de Servicios', 'prestacion_servicios'),
-    ('Prestación de Servicios y Compraventa', 'prestacion_servicios_compraventa'),
-    ('Prestación de Servicios y Suministro', 'prestacion_servicios_suministro'),
-    ('Seguros', 'seguros'),
-    ('Prestación de Servicios Profesionales', 'prestacion_servicios_profesionales'),
-    ('Suministro', 'suministro'),
-]
-
-FUENTE_RECURSOS_CHOICES = [
-    ('recursos_propios', 'Recursos propios'),
-    ('presupuesto_entidad_nacional', 'Presupuesto de entidad nacional'),
-    ('regalias', 'Regalías'),
-    ('recursos_credito', 'Recursos de crédito'),
-    ('sgp', 'SGP'),
-    ('no_aplica', 'No Aplica'),
-]
+        ('Arrendamiento', 'Arrendamiento'),
+        ('Cesión Derechos Patrimoniales', 'Cesión Derechos Patrimoniales'),
+        ('Compraventa', 'Compraventa'),
+        ('Consultoría', 'Consultoría'),
+        ('Interadministrativo', 'Interadministrativo'),
+        ('Obra Pública', 'Obra Pública'),
+        ('Orden Compra Colombia Compra Eficiente', 'Orden Compra Colombia Compra Eficiente'),
+        ('Prestación de Servicios', 'Prestación de Servicios'),
+        ('Prestación de Servicios y Compraventa', 'Prestación de Servicios y Compraventa'),
+        ('Prestación de Servicios y Suministro', 'Prestación de Servicios y Suministro'),
+        ('Seguros', 'Seguros'),
+        ('Prestación de Servicios Profesionales', 'Prestación de Servicios Profesionales'),
+        ('Suministro', 'Suministro'),
+    ]
+FUENTE_RECURSOS_CHOICES = [('Recursos propios', 'Recursos propios'),
+        ('Presupuesto de entidad nacional', 'Presupuesto de entidad nacional'),
+        ('Regalías', 'Regalías'),
+        ('Recursos de credito', 'Recursos de credito'),
+        ('SGP', 'SGP'),
+        ('No Aplica', 'No Aplica'),
+    ]
+ESTADO_CONTRATO_CHOICES = [
+        ('Activo', 'Activo'),
+        ('Suspendido', 'Suspendido'),
+        ('Liquidado', 'Liquidado'),
+    ]
 
 
 class Contratista(models.Model):
@@ -46,8 +47,10 @@ class Contratista(models.Model):
     nit_o_cc_representante_legal = models.IntegerField(blank=True, null=True)
     telefono = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
+    email_secundario = models.EmailField(blank=True, null=True)
+    consorcio = models.CharField(max_length=255, blank= True, null = True )
     #extra
-    fecha_agregado = models.DateField(blank=True, null=True)
+    fecha_agregado = models.DateField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.nombre
@@ -64,7 +67,32 @@ class Supervisor(models.Model):
     def __str__(self):
         return self.nombre
 
+class Rol(models.Model):
+    USUARIO_ROLES = (
+        ('gestor', 'Gestor'),
+        ('abogado', 'Abogado'),
+        ('revisor', 'Revisor'),
+    )
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='roles')
+    rol = models.CharField(max_length=10, choices=USUARIO_ROLES)
+    grupo = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True)
+    permisos_adicionales = models.ManyToManyField(Permission, blank=True)
+
+    class Meta:
+        unique_together = ('usuario', 'rol')
+
+    def __str__(self):
+        return f"{self.usuario.username} ({self.get_rol_display()})"
+
+
+
+# INICIO DE LO RELACIONADO CON CONTRATO ===========================================================================================================
+
+#TODO: revisar todos lso modelos en su integracion
+# Estas con las que puede coexistir con el proceso de manera activa
 class Adicion(models.Model):
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='adiciones', null=True)
     adicion_1 = models.CharField(max_length=255)
     adicion_2 = models.CharField(max_length=255, blank=True, null=True)
     adicion_3 = models.CharField(max_length=255, blank=True, null=True)
@@ -73,23 +101,57 @@ class Adicion(models.Model):
     fecha = models.DateField()
 
 class Prorroga(models.Model):
-    fecha = models.DateField()
-    justificacion = models.TextField()
-    nueva_fecha_finalizacion = models.DateField()
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='prorrogas', null=True)
+    fecha = models.DateField(null=True)
+    justificacion = models.TextField(null=True)
+    nueva_fecha_terminacion = models.DateField(null=True)
     fecha_suspension = models.DateField(blank=True, null=True)
     fecha_reinicio = models.DateField(blank=True, null=True)
+    
+
+class Modificacion(models.Model):
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='modificaciones', null=True)
+    fecha_subscripcion =  models.DateField(null=True)
+    motivo =  models.CharField( max_length=250,null=True)
+
+class Aclaracion(models.Model):
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='aclaraciones', null=True)
+    fecha_subscripcion =  models.DateField(null=True)
+    motivo =  models.CharField( max_length=250,null=True)
+
+# Estas con las que NO puede coexistir con el proceso de manera activa
+
+class Suspension(models.Model):
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='suspensiones', null=True)
+    fecha_subscripcion =  models.DateField(null=True)
+    plazo= models.DateField(null=True)
+    fecha_posible_reinicio =  models.DateField(blank = True, null = True)
+
+class Reinicio(models.Model):
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='reinicios', null=True)
+    fecha_subscripcion =  models.DateField(null=True)
+    fecha_terminacion = models.DateField(null=True)
+
+class Ampliacion(models.Model):
+    contrato = models.ForeignKey('Contrato', on_delete=models.CASCADE, related_name='ampliaciones', null=True)
+    fecha_subscripcion =  models.DateField(null=True)
+    fecha_terminacion = models.DateField(null=True)
+
+
+# CONTRATO ===========================================================================================================
 
 class Contrato(models.Model):
+    
 
-    #Fundamentales
-    numero_contrato = models.IntegerField(unique=True, blank=True, null=True, default=0)
-    tipo_contratacion = models.CharField(max_length=600, choices=MODALIDAD_SELECCION_CHOICES, default="noinfo")
+    #Datos Generales
     objeto = models.TextField(blank=True, null=True, default="no se ha presentado objeto")
-    clase = models.CharField(max_length=600, choices=CLASE_CONTRATO_CHOICES, blank=True, null=True)
+    numero_contrato = models.IntegerField(unique=True, blank=True, null=True, default=0)
+    tipo_contratacion = models.CharField(max_length=600, choices=MODALIDAD_SELECCION_CHOICES, default="Sin Tipo")
+    clase = models.CharField(max_length=600, choices=CLASE_CONTRATO_CHOICES, blank=True, null=True, default="Sin Clase")
     valor = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True, default=0)  # final
-
+    plazo = models.CharField(max_length=50 , blank= True, null = True)
+    fecha_suscripcion_contrato = models.DateField(blank=True, null=True)
     #Contractual ----------------------------------------------------------------------------------------------------------------------------
-    fecha_suscripcion_contrato = models.DateField(blank=True, null=True)  # Fecha cuando se inicia la firma del contrato
     # CDP y RP
     CDP_num = models.IntegerField(unique=True, blank=True, null=True)
     CDP_fecha = models.DateField(blank=True, null=True)
@@ -106,6 +168,7 @@ class Contrato(models.Model):
     )
     fecha_poliza_expedicion = models.DateField(blank=True, null=True)
     fecha_poliza_aprobacion = models.DateField(blank=True, null=True)
+    aseguradora = models.CharField(blank=True, null=True, max_length=50)
     #fuente de recursos
     fuente_recursos = models.CharField(
         max_length=600, 
@@ -117,7 +180,7 @@ class Contrato(models.Model):
     plazo_inicio = models.DateField(blank=True, null=True)
     plazo_fin = models.DateField(blank=True, null=True)
     #estados
-    estado_contrato=models.CharField(default='En Ejecución', max_length=200)
+    estado_contrato=models.CharField(default='Activo' , max_length=200, choices=ESTADO_CONTRATO_CHOICES)
     #documentos
     documentos_cargados = models.URLField(max_length=600, blank=True, null=True)
     #Secop
@@ -140,9 +203,6 @@ class Contrato(models.Model):
     
     # llaves foraneas ---------------------------------------------------------------------------------------------------------------------------
     # Extensiones del contrato si llega a suceder
-    adicion = models.ForeignKey(Adicion, on_delete=models.SET_NULL, blank=True, null=True)
-    prorroga = models.ForeignKey(Prorroga, on_delete=models.SET_NULL, blank=True, null=True)
-
     # gestores involucrados
     contratista = models.ForeignKey(Contratista, on_delete=models.SET_NULL, blank=True, null=True)
     supervisor = models.ForeignKey(Supervisor, on_delete=models.SET_NULL, blank=True, null=True)
@@ -152,35 +212,12 @@ class Contrato(models.Model):
     abogado = models.ForeignKey(User, related_name='abogado_contratos', on_delete=models.SET_NULL, null=True, blank=True)
     revisor = models.ForeignKey(User, related_name='revisor_contratos', on_delete=models.SET_NULL, null=True, blank=True)
 
+# workspace/forms.py
+
+    
     def __str__(self):
         return f"Contrato {self.numero_contrato}"
 
-    def clean(self):
-        if self.publicacion_secop == '':
-            self.publicacion_secop = None
-        
-        if self.fuente_recursos == '':
-            self.fuente_recursos = None
-        
-        if self.numero_poliza == '':
-            self.numero_poliza = None
 
 
-class Rol(models.Model):
-    USUARIO_ROLES = (
-        ('gestor', 'Gestor'),
-        ('abogado', 'Abogado'),
-        ('revisor', 'Revisor'),
-    )
-
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='roles')
-    rol = models.CharField(max_length=10, choices=USUARIO_ROLES)
-    grupo = models.ForeignKey(Group, on_delete=models.SET_NULL, null=True, blank=True)
-    permisos_adicionales = models.ManyToManyField(Permission, blank=True)
-
-    class Meta:
-        unique_together = ('usuario', 'rol')
-
-    def __str__(self):
-        return f"{self.usuario.username} ({self.get_rol_display()})"
 

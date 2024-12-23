@@ -1,0 +1,137 @@
+{% extends "dashboard.html" %}
+{% load static tailwind_tags %}
+{% load static %}
+{% load form_filters %}
+{% block title %} Contrato - {{ contrato.numero_contrato }} - Adición {% endblock title %}
+
+{% block contentdash %}
+<section class="text-gray-600 body-font w-screen overflow-auto">
+    <div class="container px-5 py-14 my-10 ml-10 max-w-[1400px] bg-white shadow-lg rounded-lg">
+        <!-- Sección de Adiciones Existentes -->
+        <div class="mb-10">
+            <h2 class="text-2xl font-medium text-gray-900 mb-4">Adiciones Existentes</h2>
+            {% if adiciones %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full table-auto">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left">Adición 1</th>
+                                <th class="px-4 py-2 text-left">Adición 2</th>
+                                <th class="px-4 py-2 text-left">Adición 3</th>
+                                <th class="px-4 py-2 text-left">Valor Total</th>
+                                <th class="px-4 py-2 text-left">Fecha</th>
+                                <th class="px-4 py-2 text-left">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for adicion in adiciones %}
+                            <tr class="border-b">
+                                <td class="px-4 py-2">{{ adicion.adicion_1 }}</td>
+                                <td class="px-4 py-2">{{ adicion.adicion_2|default:"-" }}</td>
+                                <td class="px-4 py-2">{{ adicion.adicion_3|default:"-" }}</td>
+                                <td class="px-4 py-2">{{ adicion.valor_total }}</td>
+                                <td class="px-4 py-2">{{ adicion.fecha|date:"d/m/Y" }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="{% url 'borrar_adicion' contrato.id adicion.id %}" 
+                                       class="text-red-500 hover:text-red-700"
+                                       onclick="return confirm('¿Está seguro de eliminar esta adición?')">
+                                        Eliminar
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-gray-600">No hay adiciones registradas para este contrato.</p>
+            {% endif %}
+        </div>
+
+        <div class="flex flex-col text-center w-full mb-10">
+            <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Crear Adición</h1>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base">Por favor, complete los detalles de la adición a continuación.</p>
+        </div>
+
+        {% if messages %}
+        <div class="mb-6">
+            <ul class="text-blue-600">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="POST" class="w-full mx-auto">
+            {% csrf_token %}
+            <div class="flex flex-wrap -m-2">
+                <!-- Información de la Adición -->
+                <div class="py-4 w-full">
+                    <h1 class="pb-2">Datos de la Adición</h1>
+                    <hr>
+                </div>
+
+                <!-- Adición 1 -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="adicion_1" class="leading-7 text-sm text-gray-600">Adición 1</label>
+                        {{ form.adicion_1|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Adición 2 -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="adicion_2" class="leading-7 text-sm text-gray-600">Adición 2</label>
+                        {{ form.adicion_2|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Adición 3 -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="adicion_3" class="leading-7 text-sm text-gray-600">Adición 3</label>
+                        {{ form.adicion_3|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Valor Total -->
+                <div class="p-2 w-1/2">
+                    <div class="relative">
+                        <label for="valor_total" class="leading-7 text-sm text-gray-600">Valor Total</label>
+                        {{ form.valor_total|add_class:"w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Fecha -->
+                <div class="p-2 w-full">
+                    <div class="relative">
+                        <label for="fecha" class="leading-7 text-sm text-gray-600">Fecha</label>
+                        {{ form.fecha|add_class:"flatpickr w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" }}
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="flex justify-end w-full items-end">
+                    <div class="p-2 mt-4">
+                        <a href="{% url 'contrato_detalle' contrato.id %}" class="flex ml-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red-600 rounded text-lg">Cancelar</a>
+                    </div>
+                    <div class="p-2 mt-4">
+                        <button type="submit" class="flex ml-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Crear Adición</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock header %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
+{% endblock scripts %}

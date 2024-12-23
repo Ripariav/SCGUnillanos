@@ -50,25 +50,41 @@
   <!-- Rol -->
   {% if user.is_staff %}
   <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-4xl">
-    <h2 class="text-2xl font-bold mb-4">Usuarios y Roles  - Solo para Staff <span class="text-red-400">TEMPORALMENTE DESHABILITADO</span> </h2>
+    <h2 class="text-2xl font-bold mb-4">Usuarios y Roles  - Solo para Staff  </h2>
     <p class="text-gray-400 mb-4">Puedes asignar roles a los usuarios de la plataforma</p> 
     <div class="mb-6">
       <table class="w-full">
         <thead>
-          <tr>
-            <th class="text-left">Nombre</th>
-            <th class="text-left">Rol</th>
+          <tr class="bg-gray-100">
+            <th class="text-left p-2">Usuario</th>
+            <th class="text-left p-2">Email</th>
+            <th class="text-left p-2">Roles Actuales</th>
+            <th class="text-left p-2">Estado</th>
           </tr>
         </thead>
         <tbody>
           {% for user in users %}
-          <tr>
-            <td>{{ user.get_full_name }}</td>
-            <td>
-              {% if user.rol %}
-                {{ user.rol.get_rol_display }}
+          <tr class="border-b">
+            <td class="p-2">{{ user.get_full_name|default:user.username }}</td>
+            <td class="p-2">{{ user.email }}</td>
+            <td class="p-2">
+              {% if user.roles_list %}
+                {% for rol in user.roles_list %}
+                  <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm mr-1">
+                    {{ rol.get_rol_display }}
+                  </span>
+                {% endfor %}
               {% else %}
-                Sin rol
+                <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                  Sin roles
+                </span>
+              {% endif %}
+            </td>
+            <td class="p-2">
+              {% if user.is_active %}
+                <span class="text-green-600">Activo</span>
+              {% else %}
+                <span class="text-red-600">Inactivo</span>
               {% endif %}
             </td>
           </tr>
@@ -81,13 +97,18 @@
       Asignar nuevo rol
     </button>
 
+    <div id="mensajeRol" class="mt-4 hidden">
+      <div class="p-4 rounded-lg"></div>
+    </div>
+
+    <!-- Formulario para asignar rol -->
     <div id="rolForm" class="hidden mt-6">
       <h3 class="text-xl font-semibold mb-4">Asignar rol a usuario</h3>
       <form id="assignRolForm" method="POST" action="{% url 'assign_rol' %}">
         {% csrf_token %}
         <div class="mb-4">
           <label for="user" class="block text-gray-700 font-semibold mb-2">Usuario:</label>
-          <select id="user" name="user" class="w-full p-2 border rounded">
+          <select id="user" name="usuario" class="w-full p-2 border rounded">
             {% for user in users %}
               <option value="{{ user.id }}">{{ user.get_full_name }}</option>
             {% endfor %}
@@ -109,6 +130,7 @@
   </div>
   {% endif %}
 
+
   <script>
     document.getElementById('showFormBtn').addEventListener('click', function() {
       document.getElementById('rolForm').classList.toggle('hidden');
@@ -127,11 +149,15 @@
       })
       .then(response => response.json())
       .then(data => {
+        const mensajeDiv = document.getElementById('mensajeRol');
+        mensajeDiv.classList.remove('hidden');
         if (data.success) {
-          alert('Rol asignado correctamente');
-          location.reload();
+          mensajeDiv.querySelector('div').className = 'p-4 rounded-lg bg-green-100 text-green-700';
+          mensajeDiv.querySelector('div').textContent = data.message;
+          setTimeout(() => location.reload(), 2000);
         } else {
-          alert('Error al asignar rol: ' + data.error);
+          mensajeDiv.querySelector('div').className = 'p-4 rounded-lg bg-red-100 text-red-700';
+          mensajeDiv.querySelector('div').textContent = 'Error: ' + data.error;
         }
       })
       .catch(error => {

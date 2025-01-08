@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,3 +26,6 @@ urlpatterns = [
     path('', include('workspace.urls')),
     path('', include('controlpanel.urls'))
 ]
+
+handler404 = 'main.views.page_not_found_view'
+

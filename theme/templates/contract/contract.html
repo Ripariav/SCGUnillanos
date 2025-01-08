@@ -108,28 +108,30 @@
                       <td class="px-4 py-3">{{ contrato.valor|floatformat:0|intcomma }}</td>
                       <td class="px-4 py-3">{{ contrato.fecha_suscripcion_contrato|date:"d/m/Y" }}</td>
                       <td class="px-4 py-3">
-                        {% if contrato.plazo_fin %}
-                            {% if contrato.dias_restantes is not None %}
-                                {% if contrato.dias_restantes < 0 %}
-                                    <a href="mailto:{{ contrato.supervisor.email }}?subject=Aviso%20de%20contrato%20vencido&body=Estimado%20{{ contrato.supervisor.nombre }},%0D%0A%0D%0AEl%20contrato%20N%C2%B0%20{{ contrato.numero_contrato }}%20venci%C3%B3%20el%20{{ contrato.plazo_fin }}.%0D%0A%0D%0AFavor%20realizar%20las%20gestiones%20correspondientes.%0D%0A%0D%0ASaludos%20cordiales,%0D%0A{{user.email}}" 
+                        {% if contrato.ultima_fecha %}
+                            {% if contrato.dias_hasta_ultima_fecha is not None %}
+                                {% if contrato.dias_hasta_ultima_fecha < 0 %}
+                                    <a href="mailto:{{ contrato.supervisor.email }}?subject=Aviso%20de%20contrato%20vencido&body=Estimado%20{{ contrato.supervisor.nombre }},%0D%0A%0D%0AEl%20contrato%20N%C2%B0%20{{ contrato.numero_contrato }}%20venci%C3%B3%20el%20{{ contrato.ultima_fecha }}.%0D%0A%0D%0AFavor%20realizar%20las%20gestiones%20correspondientes.%0D%0A%0D%0ASaludos%20cordiales,%0D%0A{{user.email}}" 
                                         target="_blank" 
                                         class="bg-red-500 text-red-100 px-2 py-1 rounded text-sm cursor-pointer">
                                         Vencido
                                     </a>
-                                {% elif contrato.dias_restantes < 10 %}
-                                    <a href="mailto:{{ contrato.supervisor.email }}?subject=Aviso%20de%20vencimiento%20de%20contrato&body=Estimado%20{{ contrato.supervisor.nombre }},%0D%0A%0D%0AEl%20contrato%20N%C2%B0%20{{ contrato.numero_contrato }}%20est%C3%A1%20pr%C3%B3ximo%20a%20vencer.%20La%20fecha%20l%C3%ADmite%20es%20{{ contrato.plazo_fin }}.%0D%0A%0D%0AQuedamos%20atentos%20a%20su%20gesti%C3%B3n.%0D%0A%0D%0ASaludos%20cordiales,%0D%0A{{user.email}}" 
+                                {% elif contrato.dias_hasta_ultima_fecha < 10 %}
+                                    <a href="mailto:{{ contrato.supervisor.email }}?subject=Aviso%20de%20vencimiento%20de%20contrato&body=Estimado%20{{ contrato.supervisor.nombre }},%0D%0A%0D%0AEl%20contrato%20N%C2%B0%20{{ contrato.numero_contrato }}%20est%C3%A1%20pr%C3%B3ximo%20a%20vencer.%20La%20fecha%20l%C3%ADmite%20es%20{{ contrato.ultima_fecha }}.%0D%0A%0D%0AQuedamos%20atentos%20a%20su%20gesti%C3%B3n.%0D%0A%0D%0ASaludos%20cordiales,%0D%0A{{user.email}}" 
                                         target="_blank" 
                                         class="bg-yellow-500 text-red-100 px-2 py-1 rounded flex items-center justify-center text-sm cursor-pointer">
-                                        {{ contrato.plazo_fin|timeuntil:hoy }}, Por Vencer
+                                        {{ contrato.ultima_fecha|timeuntil:hoy }}, Por Vencer
                                     </a>
                                 {% else %}
-                                    <span class="bg-green-500 text-green-100 px-2 py-1 rounded flex items-center justify-center text-sm ">
-                                        {{ contrato.plazo_fin|timeuntil:hoy }}
+                                    <span class="bg-green-500 text-green-100 px-2 py-1 rounded flex items-center justify-center text-sm">
+                                        {{ contrato.ultima_fecha|timeuntil:hoy }}
                                     </span>
                                 {% endif %}
                             {% else %}
-                                Sin fecha de finalización
+                                <p class="bg-gray-600 text-white px-2 py-1 rounded flex items-center justify-center text-sm cursor-not-allowed">Sin fecha de finalización</p>
                             {% endif %}
+                        {% else %}
+                            <p class="bg-gray-600 text-white px-2 py-1 rounded flex items-center justify-center text-sm cursor-not-allowed">Sin fecha de finalización</p>
                         {% endif %}
                       </td>
                       <td class="px-4 py-3">{{ contrato.CDP_num }}</td>

@@ -52,8 +52,19 @@ def crear_contrato(request):
 
 @login_required
 def contratosview(request):
+    # Si es superusuario, obtiene todos los contratos
+    if request.user.is_superuser:
+        contratos = Contrato.objects.all()
+    else:
+        # Si no es superusuario, obtiene solo los contratos donde está involucrado
+        contratos = Contrato.objects.filter(
+            Q(gestor=request.user) |              # Si es gestor
+            Q(abogado=request.user) |             # Si es abogado
+            Q(revisor=request.user)               # Si es revisor
+        )
 
-    contratos = Contrato.objects.all().order_by('-id')  # Ordenamos por ID de forma descendente
+    # Ordenar por ID de forma descendente y eliminar duplicados
+    contratos = contratos.order_by('-id').distinct()
 
     hoy = date.today()
 
@@ -101,8 +112,8 @@ def contratosview(request):
 
     contratos_data = []
     for contrato in contratos_paginados:
-        if contrato.plazo_fin:
-            dias_restantes = (contrato.plazo_fin - hoy).days
+        if contrato.ultima_fecha:
+            dias_restantes = contrato.dias_hasta_ultima_fecha
             estado = 'activo' if dias_restantes > 0 else 'finalizado'
         else:
             dias_restantes = None
@@ -111,7 +122,7 @@ def contratosview(request):
         contratos_data.append({
             'numero_contrato': contrato.numero_contrato,
             'objeto': contrato.objeto,
-            'plazo_fin': contrato.plazo_fin.isoformat() if contrato.plazo_fin else None,
+            'plazo_fin': contrato.ultima_fecha.isoformat() if contrato.ultima_fecha else None,
             'dias_restantes': dias_restantes,
             'estado': estado,
         })
@@ -567,6 +578,16 @@ def personal_c_delete(request, contratista_id):
 # -----------------------------------------------------------------------
 @login_required
 def exportar_contratos_csv(request):
+    # Aplicar los mismos filtros de acceso que en contratosview
+    if request.user.is_superuser:
+        contratos = Contrato.objects.all()
+    else:
+        contratos = Contrato.objects.filter(
+            Q(gestor=request.user) |
+            Q(abogado=request.user) |
+            Q(revisor=request.user)
+        ).distinct()
+
     # Definir la respuesta como un archivo CSV
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="contratos.csv"'
@@ -582,22 +603,28 @@ def exportar_contratos_csv(request):
         'Fecha Publicación SECOP', 'Publicación SECOP', 'Almacén', 'Fecha Liquidación'
     ])
 
-    # Obtener los contratos de la base de datos
-    contratos = Contrato.objects.all()
-
     # Escribir los datos de cada contrato en una fila
     for contrato in contratos:
         writer.writerow([
-            contrato.numero_contrato, contrato.tipo_contratacion, contrato.descripcion,
-            contrato.clase, contrato.valor, contrato.fecha_suscripcion_contrato.strftime("%d/%m/%Y") if contrato.fecha_suscripcion_contrato else '',
-            contrato.CDP_num, contrato.CDP_fecha.strftime("%d/%m/%Y") if contrato.CDP_fecha else '',
-            contrato.RP_num, contrato.RP_fecha.strftime("%d/%m/%Y") if contrato.RP_fecha else '',
-            contrato.rubro_presupuestal, contrato.numero_poliza, contrato.fuente_recursos,
+            contrato.numero_contrato, 
+            contrato.tipo_contratacion, 
+            contrato.descripcion,
+            contrato.clase, 
+            contrato.valor, 
+            contrato.fecha_suscripcion_contrato.strftime("%d/%m/%Y") if contrato.fecha_suscripcion_contrato else '',
+            contrato.CDP_num, 
+            contrato.CDP_fecha.strftime("%d/%m/%Y") if contrato.CDP_fecha else '',
+            contrato.RP_num, 
+            contrato.RP_fecha.strftime("%d/%m/%Y") if contrato.RP_fecha else '',
+            contrato.rubro_presupuestal, 
+            contrato.numero_poliza, 
+            contrato.fuente_recursos,
             contrato.plazo_inicio.strftime("%d/%m/%Y") if contrato.plazo_inicio else '',
             contrato.plazo_fin.strftime("%d/%m/%Y") if contrato.plazo_fin else '',
             contrato.estado_contrato, 
             contrato.fecha_publicacion_secop.strftime("%d/%m/%Y") if contrato.fecha_publicacion_secop else '',
-            contrato.publicacion_secop, 'Sí' if contrato.almacen else 'No',
+            contrato.publicacion_secop, 
+            'Sí' if contrato.almacen else 'No',
             contrato.fecha_liquidacion.strftime("%d/%m/%Y") if contrato.fecha_liquidacion else ''
         ])
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from workspace.models import Contrato, Rol
+from workspace.models import Contrato, Rol, Prorroga, Suspension
 from django.contrib.auth.decorators import login_required
 from datetime import date
 import json
@@ -10,10 +10,16 @@ import json
 def homeview(request):
     user = request.user
     hoy = date.today()
+    num_contratos_ven = 0
     num_contratos_pendientes = 0
-    num_cnt_act = 0
     num_precio_act = 0.0
     canti_contratos = 0
+    
+    num_contratos_liq = 0
+    num_contratos_act = 0
+    num_contratos_susp = 0
+
+    # Contadores para los tipos de contratos
     c_dir = 0
     c_priv = 0
     c_pub = 0
@@ -28,6 +34,7 @@ def homeview(request):
     contratos_data = []
 
     for contrato in contratos:
+        
         num_precio_act += float(contrato.valor) if contrato.valor is not None else 0.0
         if contrato.tipo_contratacion:
             if contrato.tipo_contratacion == 'Directa':
@@ -43,13 +50,20 @@ def homeview(request):
             dias_restantes = (contrato.plazo_fin - hoy).days
             estado = 'activo' if dias_restantes > 0 else 'finalizado'
             if dias_restantes < 0:
-                num_contratos_pendientes += 1
+                num_contratos_ven += 1
             else:
-                num_cnt_act += 1
+                num_contratos_pendientes += 1
         else:
             dias_restantes = None
             estado = 'sin fecha de finalización'
+        if contrato.estado_contrato == 'Activo':
+            num_contratos_act += 1
+        elif contrato.estado_contrato == 'Suspendido':
+            num_contratos_susp += 1
+        elif contrato.estado_contrato == 'Liquidado':
+            num_contratos_liq += 1
 
+        # Agregar los datos del contrato a la lista
         contratos_data.append({
             'numero_contrato': contrato.numero_contrato,
             'objeto': contrato.objeto,
@@ -75,9 +89,9 @@ def homeview(request):
 
     # Datos para el gráfico de pastel
     pie_data = [
-        {'value': num_contratos_pendientes, 'name': 'Pendientes'},
-        {'value': num_cnt_act, 'name': 'Activos'},
-        {'value': num_precio_act, 'name': 'Precio Total'}
+        {'value': num_contratos_susp, 'name': 'Suspendidos'},
+        {'value': num_contratos_liq, 'name': 'Liquidados'},
+        {'value': num_contratos_act, 'name': 'Activos'},
     ]
 
     context = {
@@ -85,7 +99,7 @@ def homeview(request):
         'contratos_json': contratos_json,
         'hoy': hoy,
         'num_contratos_pen': num_contratos_pendientes,
-        'num_contratos_act': num_cnt_act,
+        'num_contratos_act': num_contratos_act,
         'num_precio_act': num_precio_act,
         'canti_contratos': canti_contratos,
         'c_pub': c_pub,

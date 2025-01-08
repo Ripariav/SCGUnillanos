@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group, Permission
 from django.core.validators import URLValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.db.models import Max
+from datetime import date
 
  #Opciones
 MODALIDAD_SELECCION_CHOICES = [
@@ -217,6 +219,48 @@ class Contrato(models.Model):
     
     def __str__(self):
         return f"Contrato {self.numero_contrato}"
+
+    @property
+    def ultima_fecha(self):
+        """
+        Calcula la fecha más reciente entre todas las modificaciones del contrato
+        """
+        fechas = []
+        
+        # Añadir fecha fin original del contrato
+        if self.plazo_fin:
+            fechas.append(self.plazo_fin)
+
+        # Verificar prórrogas
+        ultima_prorroga = self.prorrogas.aggregate(Max('nueva_fecha_terminacion'))
+        if ultima_prorroga['nueva_fecha_terminacion__max']:
+            fechas.append(ultima_prorroga['nueva_fecha_terminacion__max'])
+
+        # Verificar ampliaciones
+        ultima_ampliacion = self.ampliaciones.aggregate(Max('fecha_terminacion'))
+        if ultima_ampliacion['fecha_terminacion__max']:
+            fechas.append(ultima_ampliacion['fecha_terminacion__max'])
+
+        # Verificar suspensiones y reinicios
+        ultima_suspension = self.suspensiones.aggregate(Max('fecha_posible_reinicio'))
+        if ultima_suspension['fecha_posible_reinicio__max']:
+            fechas.append(ultima_suspension['fecha_posible_reinicio__max'])
+
+        ultimo_reinicio = self.reinicios.aggregate(Max('fecha_terminacion'))
+        if ultimo_reinicio['fecha_terminacion__max']:
+            fechas.append(ultimo_reinicio['fecha_terminacion__max'])
+
+        # Retornar la fecha más reciente
+        return max(fechas) if fechas else None
+
+    @property
+    def dias_hasta_ultima_fecha(self):
+        """
+        Calcula los días restantes hasta la última fecha
+        """
+        if self.ultima_fecha:
+            return (self.ultima_fecha - date.today()).days
+        return None
 
 
 

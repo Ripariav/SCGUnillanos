@@ -68,6 +68,9 @@ def profile_view(request):
     }
     return render(request, 'profile/profile.html', context)
 
+def page_not_found_view(request, exception):
+    return render(request, '404.html', status=404)
+
 
 
 
